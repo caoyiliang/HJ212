@@ -1,11 +1,6 @@
 ﻿using Communication;
 using HJ212.Response;
 using ProtocolInterface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HJ212
 {
@@ -16,6 +11,9 @@ namespace HJ212
 
         /// <summary>C2提取现场机时间</summary>
         event ActivelyAskDataEventHandler<(string? PolId, RspInfo RspInfo), DateTime?> OnGetSystemTime;
+
+        /// <summary>C3设置现场机时间</summary>
+        event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)> OnSetSystemTime;
 
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 

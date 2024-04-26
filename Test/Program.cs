@@ -7,6 +7,13 @@ IGB gb = new GB("通道一", new SerialPort(), "88888888");
 
 gb.OnSetOverTimeAndReCount += Gb_OnSetOverTimeAndReCount;
 gb.OnGetSystemTime += Gb_OnGetSystemTime;
+gb.OnSetSystemTime += Gb_OnSetSystemTime;
+
+//测试 
+async Task Gb_OnSetSystemTime((string? PolId, DateTime SystemTime, HJ212.Response.RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 //测试 QN=20160801085857223;ST=32;CN=1011;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018&&
 async Task<DateTime?> Gb_OnGetSystemTime((string? PolId, HJ212.Response.RspInfo RspInfo) objects)

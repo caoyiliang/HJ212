@@ -15,7 +15,6 @@ namespace HJ212
     public class GB : IGB
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<GB>();
-        private readonly string _name;
         private readonly string _mn;
         private readonly bool _flag;
         private readonly string _pw;
@@ -26,8 +25,11 @@ namespace HJ212
         private bool _isConnect = false;
         public bool IsConnect => _isConnect;
 
+        internal static string _name = "HJ212";
+
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
         public event ActivelyAskDataEventHandler<(string? PolId, RspInfo RspInfo), DateTime?>? OnGetSystemTime;
+        public event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)>? OnSetSystemTime;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -145,8 +147,26 @@ namespace HJ212
                     }
                     else
                     {
-                        var time = t.Result;
-                        await _pigeonPort.SendAsync(new CN1011Req(rs.PolId, time, rs.RspInfo));
+                        await _pigeonPort.SendAsync(new CN1011Req(rs.PolId, t.Result, rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+
+        private async Task SetSystemTimeRspEvent((string? PolId, DateTime SystemTime, RspInfo RspInfo) rs)
+        {
+            if (OnSetSystemTime is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnSetSystemTime(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB SetSystemTime Error");
+                    }
+                    else
+                    {
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });

@@ -19,11 +19,11 @@ namespace HJ212.Response
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
             if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("OverTime"))?.Split('=')[1], out _overTime))
             {
-                throw new ArgumentException($"HJ212 Set OverTime Error");
+                throw new ArgumentException($"{GB._name} HJ212 Set OverTime Error");
             }
             if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("ReCount"))?.Split('=')[1], out _reCount))
             {
-                throw new ArgumentException($"HJ212 Set OverTime Error");
+                throw new ArgumentException($"{GB._name} HJ212 Set OverTime Error");
             }
             await Task.CompletedTask;
         }
@@ -34,7 +34,7 @@ namespace HJ212.Response
             var dstr = Encoding.ASCII.GetString(data);
             if (StringByteUtils.BytesToString(CRC.GBcrc16(data, data.Length - 4)).Replace(" ", "") != dstr[^4..])
             {
-                throw new ArgumentException($"CRC Error: {dstr}", nameof(bytes));
+                throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
             return rs.Where(item => item.Contains("CN=1000")).Any();

@@ -1,7 +1,6 @@
 ﻿using HJ212.Response;
 using System.Text;
 using TopPortLib.Interfaces;
-using Utils;
 
 namespace HJ212.Request
 {
@@ -9,7 +8,7 @@ namespace HJ212.Request
     {
         public byte[] ToBytes()
         {
-            var cmd = $"{rspInfo.QN};{rspInfo.ST};CN=9014;{rspInfo.PW};{rspInfo.MN};Flag=4;CP=&&QnRtn=1&&";
+            var cmd = $"{rspInfo.QN};{rspInfo.ST};CN=9011;{rspInfo.PW};{rspInfo.MN};Flag=4;CP=&&QnRtn=1&&";
             cmd = GB.GetGbCmd(cmd);
             return Encoding.ASCII.GetBytes(cmd);
         }

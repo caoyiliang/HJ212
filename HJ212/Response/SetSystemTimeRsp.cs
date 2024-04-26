@@ -4,9 +4,10 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class GetSystemTimeRsp : IAsyncResponse<(string? PolId, RspInfo RspInfo)>
+    internal class SetSystemTimeRsp : IAsyncResponse<(string? PolId, DateTime SystemTime, RspInfo RspInfo)>
     {
         private string? _polId;
+        private DateTime _systemTime;
         private RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
         {
@@ -17,6 +18,10 @@ namespace HJ212.Response
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
             _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1];
+            if (DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("SystemTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _systemTime))
+            {
+                throw new ArgumentException($"{GB._name} HJ212 Set SystemTime Error");
+            }
             await Task.CompletedTask;
         }
 
@@ -29,12 +34,12 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return rs.Where(item => item.Contains("CN=1011")).Any();
+            return rs.Where(item => item.Contains("CN=1012")).Any();
         }
 
-        public (string? PolId, RspInfo RspInfo) GetResult()
+        public (string? PolId, DateTime SystemTime, RspInfo RspInfo) GetResult()
         {
-            return (_polId, _rspInfo);
+            return (_polId, _systemTime, _rspInfo);
         }
     }
 }
