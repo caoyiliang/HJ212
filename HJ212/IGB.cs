@@ -27,6 +27,9 @@ namespace HJ212
         /// <summary>C7提取分钟数据间隔</summary>
         event ActivelyAskDataEventHandler<RspInfo, int> OnGetMinuteDataInterval;
 
+        /// <summary>C8设置分钟数据间隔</summary>
+        event ActivelyPushDataEventHandler<(int MinInterval, RspInfo RspInfo)> OnSetMinuteDataInterval;
+
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);

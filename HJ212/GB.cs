@@ -33,6 +33,7 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetRealTimeDataInterval;
         public event ActivelyPushDataEventHandler<(int RtdInterval, RspInfo RspInfo)>? OnSetRealTimeDataInterval;
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetMinuteDataInterval;
+        public event ActivelyPushDataEventHandler<(int MinInterval, RspInfo RspInfo)>? OnSetMinuteDataInterval;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -128,7 +129,7 @@ namespace HJ212
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB SetOverTimeAndReCount Error");
+                        _logger.Error($"{_name} GB SetOverTimeAndReCount Error\n{t.Exception}");
                     }
                     else
                     {
@@ -149,7 +150,7 @@ namespace HJ212
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB GetSystemTime Error");
+                        _logger.Error($"{_name} GB GetSystemTime Error\n{t.Exception}");
                     }
                     else
                     {
@@ -171,7 +172,7 @@ namespace HJ212
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB SetSystemTime Error");
+                        _logger.Error($"{_name} GB SetSystemTime Error\n{t.Exception}");
                     }
                     else
                     {
@@ -199,7 +200,7 @@ namespace HJ212
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB GetRealTimeDataInterval Error");
+                        _logger.Error($"{_name} GB GetRealTimeDataInterval Error\n{t.Exception}");
                     }
                     else
                     {
@@ -221,7 +222,7 @@ namespace HJ212
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB SetRealTimeDataInterval Error");
+                        _logger.Error($"{_name} GB SetRealTimeDataInterval Error\n{t.Exception}");
                     }
                     else
                     {
@@ -242,12 +243,33 @@ namespace HJ212
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB OnGetMinuteDataInterval Error");
+                        _logger.Error($"{_name} GB GetMinuteDataInterval Error\n{t.Exception}");
                     }
                     else
                     {
                         await _pigeonPort.SendAsync(new CN1063Req(t.Result, rs));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c8
+        private async Task SetMinuteDataIntervalRspEvent((int RtdInterval, RspInfo RspInfo) rs)
+        {
+            if (OnSetMinuteDataInterval is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnSetMinuteDataInterval(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB SetMinuteDataInterval Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
             }
