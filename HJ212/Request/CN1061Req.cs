@@ -1,0 +1,20 @@
+﻿using HJ212.Response;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TopPortLib.Interfaces;
+
+namespace HJ212.Request
+{
+    internal class CN1061Req(int rtdInterval, RspInfo rspInfo) : IByteStream
+    {
+        public byte[] ToBytes()
+        {
+            var cmd = $"{rspInfo.QN};{rspInfo.ST};CN=1061;{rspInfo.PW};{rspInfo.MN};Flag=4;CP=&&RtdInterval={rtdInterval}&&";
+            cmd = GB.GetGbCmd(cmd);
+            return Encoding.ASCII.GetBytes(cmd);
+        }
+    }
+}

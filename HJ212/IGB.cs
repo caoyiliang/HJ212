@@ -18,6 +18,9 @@ namespace HJ212
         /// <summary>C4现场机时间校准请求</summary>
         Task AskSetSystemTime(string polId);
 
+        /// <summary>C5提取实时数据间隔</summary>
+        event ActivelyAskDataEventHandler<RspInfo, int> OnGetRealTimeDataInterval;
+
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);

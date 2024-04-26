@@ -8,8 +8,15 @@ IGB gb = new GB("通道一", new SerialPort(), "88888888");
 gb.OnSetOverTimeAndReCount += Gb_OnSetOverTimeAndReCount;
 gb.OnGetSystemTime += Gb_OnGetSystemTime;
 gb.OnSetSystemTime += Gb_OnSetSystemTime;
+gb.OnGetRealTimeDataInterval += Gb_OnGetRealTimeDataInterval;
 
-//测试 
+//测试 QN=20160801085857223;ST=32;CN=1061;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
+Task<int> Gb_OnGetRealTimeDataInterval(HJ212.Response.RspInfo objects)
+{
+    return Task.FromResult(5);
+}
+
+//测试 QN=20160801085857223;ST=32;CN=1012;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018;SystemTime=20160801085857&&
 async Task Gb_OnSetSystemTime((string? PolId, DateTime SystemTime, HJ212.Response.RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
@@ -30,8 +37,11 @@ async Task Gb_OnSetOverTimeAndReCount((int OverTime, int ReCount, HJ212.Response
 
 await gb.OpenAsync();
 
-await gb.AskSetSystemTime("a1001");
-
+try
+{
+    await gb.AskSetSystemTime("a1001");
+}
+catch { }
 await gb.SendRealTimeData(DateTime.Now, new Dictionary<string, (string? value, string? flag)>() { { "a1001", ("50.4", "N") }, { "a1002", ("35.2", "D") } });
 await gb.SendMinuteData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });
 await gb.SendHourData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });

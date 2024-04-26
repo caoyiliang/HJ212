@@ -30,6 +30,7 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
         public event ActivelyAskDataEventHandler<(string? PolId, RspInfo RspInfo), DateTime?>? OnGetSystemTime;
         public event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)>? OnSetSystemTime;
+        public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetRealTimeDataInterval;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -146,7 +147,7 @@ namespace HJ212
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB OnGetSystemTime Error");
+                        _logger.Error($"{_name} GB GetSystemTime Error");
                     }
                     else
                     {
@@ -183,6 +184,28 @@ namespace HJ212
         public async Task AskSetSystemTime(string polId)
         {
             await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(_mn, _pw, _st, polId));
+        }
+        #endregion
+
+        #region c5
+        private async Task GetRealTimeDataIntervalRspEvent(RspInfo rs)
+        {
+            if (OnGetRealTimeDataInterval is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await OnGetRealTimeDataInterval(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetRealTimeDataInterval Error");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new CN1061Req(t.Result, rs));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                    }
+                });
+            }
         }
         #endregion
     }
