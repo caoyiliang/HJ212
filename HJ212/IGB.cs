@@ -11,8 +11,11 @@ namespace HJ212
 {
     public interface IGB : IProtocol
     {
-        /// <summary>C1</summary>
-        event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
+        /// <summary>C1设置超时时间及重发次数</summary>
+        event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)> OnSetOverTimeAndReCount;
+
+        /// <summary>C2提取现场机时间</summary>
+        event ActivelyAskDataEventHandler<(string? PolId, RspInfo RspInfo), DateTime?> OnGetSystemTime;
 
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 

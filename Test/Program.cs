@@ -6,7 +6,16 @@ Console.WriteLine("Hello, World!");
 IGB gb = new GB("通道一", new SerialPort(), "88888888");
 
 gb.OnSetOverTimeAndReCount += Gb_OnSetOverTimeAndReCount;
+gb.OnGetSystemTime += Gb_OnGetSystemTime;
 
+//测试 QN=20160801085857223;ST=32;CN=1011;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018&&
+async Task<DateTime?> Gb_OnGetSystemTime((string? PolId, HJ212.Response.RspInfo RspInfo) objects)
+{
+    //回复空，则取系统时间回复
+    return await Task.FromResult<DateTime?>(default);
+}
+
+//测试 QN=20160801085857223;ST=32;CN=1000;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&OverTime=5;ReCount=3&&
 async Task Gb_OnSetOverTimeAndReCount((int OverTime, int ReCount, HJ212.Response.RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;

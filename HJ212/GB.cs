@@ -27,6 +27,7 @@ namespace HJ212
         public bool IsConnect => _isConnect;
 
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
+        public event ActivelyAskDataEventHandler<(string? PolId, RspInfo RspInfo), DateTime?>? OnGetSystemTime;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -125,6 +126,27 @@ namespace HJ212
                     }
                     else
                     {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+
+        private async Task GetSystemTimeRspEvent((string? PolId, RspInfo RspInfo) rs)
+        {
+            if (OnGetSystemTime is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnGetSystemTime(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB OnGetSystemTime Error");
+                    }
+                    else
+                    {
+                        var time = t.Result;
+                        await _pigeonPort.SendAsync(new CN1011Req(rs.PolId, time, rs.RspInfo));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
