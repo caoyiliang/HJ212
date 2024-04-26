@@ -4,10 +4,9 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class SetOverTimeAndReCountRsp : IAsyncResponse<(int OverTime, int ReCount, RspInfo RspInfo)>
+    internal class SetRealTimeDataIntervalRsp : IAsyncResponse<(int RtdInterval, RspInfo RspInfo)>
     {
-        private int _overTime;
-        private int _reCount;
+        private int _rtdInterval;
         private RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
         {
@@ -17,13 +16,9 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("OverTime"))?.Split('=')[1], out _overTime))
+            if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("RtdInterval"))?.Split('=')[1], out _rtdInterval))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set OverTime Error");
-            }
-            if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("ReCount"))?.Split('=')[1], out _reCount))
-            {
-                throw new ArgumentException($"{GB._name} HJ212 Set ReCount Error");
+                throw new ArgumentException($"{GB._name} HJ212 Set RtdInterval Error");
             }
             await Task.CompletedTask;
         }
@@ -37,12 +32,12 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return rs.Where(item => item.Contains("CN=1000")).Any();
+            return rs.Where(item => item.Contains("CN=1062")).Any();
         }
 
-        public (int OverTime, int ReCount, RspInfo RspInfo) GetResult()
+        public (int RtdInterval, RspInfo RspInfo) GetResult()
         {
-            return (_overTime, _reCount, _rspInfo);
+            return (_rtdInterval, _rspInfo);
         }
     }
 }

@@ -9,6 +9,13 @@ gb.OnSetOverTimeAndReCount += Gb_OnSetOverTimeAndReCount;
 gb.OnGetSystemTime += Gb_OnGetSystemTime;
 gb.OnSetSystemTime += Gb_OnSetSystemTime;
 gb.OnGetRealTimeDataInterval += Gb_OnGetRealTimeDataInterval;
+gb.OnSetRealTimeDataInterval += Gb_OnSetRealTimeDataInterval;
+
+//测试 QN=20160801085857223;ST=32;CN=1062;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&RtdInterval=30&&
+Task Gb_OnSetRealTimeDataInterval((int RtdInterval, HJ212.Response.RspInfo RspInfo) objects)
+{
+    return Task.CompletedTask;
+}
 
 //测试 QN=20160801085857223;ST=32;CN=1061;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
 Task<int> Gb_OnGetRealTimeDataInterval(HJ212.Response.RspInfo objects)

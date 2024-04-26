@@ -21,6 +21,9 @@ namespace HJ212
         /// <summary>C5提取实时数据间隔</summary>
         event ActivelyAskDataEventHandler<RspInfo, int> OnGetRealTimeDataInterval;
 
+        /// <summary>C6设置实时数据间隔</summary>
+        event ActivelyPushDataEventHandler<(int RtdInterval, RspInfo RspInfo)> OnSetRealTimeDataInterval;
+
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
