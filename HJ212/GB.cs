@@ -32,6 +32,7 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)>? OnSetSystemTime;
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetRealTimeDataInterval;
         public event ActivelyPushDataEventHandler<(int RtdInterval, RspInfo RspInfo)>? OnSetRealTimeDataInterval;
+        public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetMinuteDataInterval;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -225,6 +226,28 @@ namespace HJ212
                     else
                     {
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c7
+        private async Task GetMinuteDataIntervalRspEvent(RspInfo rs)
+        {
+            if (OnGetMinuteDataInterval is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await OnGetMinuteDataInterval(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB OnGetMinuteDataInterval Error");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new CN1063Req(t.Result, rs));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
                     }
                 });
             }

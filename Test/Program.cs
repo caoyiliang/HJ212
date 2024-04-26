@@ -10,6 +10,13 @@ gb.OnGetSystemTime += Gb_OnGetSystemTime;
 gb.OnSetSystemTime += Gb_OnSetSystemTime;
 gb.OnGetRealTimeDataInterval += Gb_OnGetRealTimeDataInterval;
 gb.OnSetRealTimeDataInterval += Gb_OnSetRealTimeDataInterval;
+gb.OnGetMinuteDataInterval += Gb_OnGetMinuteDataInterval;
+
+//测试 QN=20160801085857223;ST=32;CN=1063;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
+Task<int> Gb_OnGetMinuteDataInterval(HJ212.Response.RspInfo objects)
+{
+    return Task.FromResult(10);
+}
 
 //测试 QN=20160801085857223;ST=32;CN=1062;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&RtdInterval=30&&
 Task Gb_OnSetRealTimeDataInterval((int RtdInterval, HJ212.Response.RspInfo RspInfo) objects)
