@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Response\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="8.0.9" />
   </ItemGroup>
 

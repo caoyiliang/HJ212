@@ -1,6 +1,7 @@
 ﻿using Communication;
 using Communication.Interfaces;
 using HJ212.Request;
+using HJ212.Response;
 using LogInterface;
 using Parser;
 using Parser.Parsers;
@@ -24,6 +25,8 @@ namespace HJ212
 
         private bool _isConnect = false;
         public bool IsConnect => _isConnect;
+
+        public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -107,6 +110,25 @@ namespace HJ212
         public async Task SendDayData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data)
         {
             await _pigeonPort.SendAsync(new SendDayDataReq(_mn, _flag, _pw, _qn, _st, dataTime, data));
+        }
+
+        private async Task SetOverTimeAndReCountRspEvent((int OverTime, int ReCount, RspInfo RspInfo) rs)
+        {
+            if (OnSetOverTimeAndReCount is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnSetOverTimeAndReCount(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB SetOverTimeAndReCount Error");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
         }
     }
 }
