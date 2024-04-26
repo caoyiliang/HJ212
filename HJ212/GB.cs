@@ -115,6 +115,7 @@ namespace HJ212
             await _pigeonPort.SendAsync(new SendDayDataReq(_mn, _flag, _pw, _qn, _st, dataTime, data));
         }
 
+        #region c1
         private async Task SetOverTimeAndReCountRspEvent((int OverTime, int ReCount, RspInfo RspInfo) rs)
         {
             if (OnSetOverTimeAndReCount is not null)
@@ -133,7 +134,9 @@ namespace HJ212
                 });
             }
         }
+        #endregion
 
+        #region c2
         private async Task GetSystemTimeRspEvent((string? PolId, RspInfo RspInfo) rs)
         {
             if (OnGetSystemTime is not null)
@@ -153,7 +156,9 @@ namespace HJ212
                 });
             }
         }
+        #endregion
 
+        #region c3
         private async Task SetSystemTimeRspEvent((string? PolId, DateTime SystemTime, RspInfo RspInfo) rs)
         {
             if (OnSetSystemTime is not null)
@@ -172,5 +177,13 @@ namespace HJ212
                 });
             }
         }
+        #endregion
+
+        #region c4
+        public async Task AskSetSystemTime(string polId)
+        {
+            await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(_mn, _pw, _st, polId));
+        }
+        #endregion
     }
 }

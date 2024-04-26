@@ -15,6 +15,9 @@ namespace HJ212
         /// <summary>C3设置现场机时间</summary>
         event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)> OnSetSystemTime;
 
+        /// <summary>C4现场机时间校准请求</summary>
+        Task AskSetSystemTime(string polId);
+
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
