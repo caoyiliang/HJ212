@@ -37,6 +37,8 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<(string NewPW, RspInfo RspInfo)>? OnSetNewPW;
         public event ActivelyPushDataEventHandler<RspInfo>? OnStartRealTimeData;
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRealTimeData;
+        public event ActivelyPushDataEventHandler<RspInfo>? OnStartRunningStateData;
+        public event ActivelyPushDataEventHandler<RspInfo>? OnStopRunningStateData;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -331,6 +333,47 @@ namespace HJ212
                     if (t.Exception != null)
                     {
                         _logger.Error($"{_name} GB StopRealTimeData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new MessageResponseReq(rs));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c12
+        private async Task StartRunningStateDataRspEvent(RspInfo rs)
+        {
+            if (OnStartRunningStateData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await OnStartRunningStateData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB StartRunningStateData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c13
+        private async Task StopRunningStateDataRspEvent(RspInfo rs)
+        {
+            if (OnStopRunningStateData is not null)
+            {
+                await OnStopRunningStateData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB StopRunningStateData Error\n{t.Exception}");
                     }
                     else
                     {

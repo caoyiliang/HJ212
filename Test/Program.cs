@@ -16,6 +16,20 @@ gb.OnSetMinuteDataInterval += Gb_OnSetMinuteDataInterval;
 gb.OnSetNewPW += Gb_OnSetNewPW;
 gb.OnStartRealTimeData += Gb_OnStartRealTimeData;
 gb.OnStopRealTimeData += Gb_OnStopRealTimeData;
+gb.OnStartRunningStateData += Gb_OnStartRunningStateData;
+gb.OnStopRunningStateData += Gb_OnStopRunningStateData;
+
+//测试 QN=20160801085857223;ST=32;CN=2022;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
+async Task Gb_OnStopRunningStateData(RspInfo objects)
+{
+    await Task.CompletedTask;
+}
+
+//测试 QN=20160801085857223;ST=32;CN=2021;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
+async Task Gb_OnStartRunningStateData(RspInfo objects)
+{
+    await Task.CompletedTask;
+}
 
 //测试 QN=20160801085857223;ST=32;CN=2012;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
 async Task Gb_OnStopRealTimeData(RspInfo objects)

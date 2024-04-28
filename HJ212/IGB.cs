@@ -39,6 +39,12 @@ namespace HJ212
         /// <summary>C11停止察看污染物实时数据</summary>
         event ActivelyPushDataEventHandler<RspInfo> OnStopRealTimeData;
 
+        /// <summary>C12取设备运行状态数据</summary>
+        event ActivelyPushDataEventHandler<RspInfo> OnStartRunningStateData;
+
+        /// <summary>C13停止察看设备运行状态</summary>
+        event ActivelyPushDataEventHandler<RspInfo> OnStopRunningStateData;
+
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
