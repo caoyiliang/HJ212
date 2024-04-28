@@ -34,6 +34,7 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<(int RtdInterval, RspInfo RspInfo)>? OnSetRealTimeDataInterval;
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetMinuteDataInterval;
         public event ActivelyPushDataEventHandler<(int MinInterval, RspInfo RspInfo)>? OnSetMinuteDataInterval;
+        public event ActivelyPushDataEventHandler<(string NewPW, RspInfo RspInfo)>? OnSetNewPW;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -266,6 +267,27 @@ namespace HJ212
                     if (t.Exception != null)
                     {
                         _logger.Error($"{_name} GB SetMinuteDataInterval Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c9
+        private async Task SetNewPWRspEvent((string NewPW, RspInfo RspInfo) rs)
+        {
+            if (OnSetNewPW is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnSetNewPW(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB SetNewPW Error\n{t.Exception}");
                     }
                     else
                     {

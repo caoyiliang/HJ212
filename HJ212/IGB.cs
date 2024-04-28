@@ -30,6 +30,9 @@ namespace HJ212
         /// <summary>C8设置分钟数据间隔</summary>
         event ActivelyPushDataEventHandler<(int MinInterval, RspInfo RspInfo)> OnSetMinuteDataInterval;
 
+        /// <summary>C9设置现场机访问密码</summary>
+        event ActivelyPushDataEventHandler<(string NewPW, RspInfo RspInfo)> OnSetNewPW;
+
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
