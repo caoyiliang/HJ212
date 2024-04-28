@@ -35,6 +35,8 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetMinuteDataInterval;
         public event ActivelyPushDataEventHandler<(int MinInterval, RspInfo RspInfo)>? OnSetMinuteDataInterval;
         public event ActivelyPushDataEventHandler<(string NewPW, RspInfo RspInfo)>? OnSetNewPW;
+        public event ActivelyPushDataEventHandler<RspInfo>? OnStartRealTimeData;
+        public event ActivelyPushDataEventHandler<RspInfo>? OnStopRealTimeData;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -292,6 +294,47 @@ namespace HJ212
                     else
                     {
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c10
+        private async Task StartRealTimeDataRspEvent(RspInfo rs)
+        {
+            if (OnStartRealTimeData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await OnStartRealTimeData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB StartRealTimeData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c11
+        private async Task StopRealTimeDataRspEvent(RspInfo rs)
+        {
+            if (OnStopRealTimeData is not null)
+            {
+                await OnStopRealTimeData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB StopRealTimeData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new MessageResponseReq(rs));
                     }
                 });
             }

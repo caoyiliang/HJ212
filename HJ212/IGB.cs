@@ -33,6 +33,12 @@ namespace HJ212
         /// <summary>C9设置现场机访问密码</summary>
         event ActivelyPushDataEventHandler<(string NewPW, RspInfo RspInfo)> OnSetNewPW;
 
+        /// <summary>C10取污染物实时数据</summary>
+        event ActivelyPushDataEventHandler<RspInfo> OnStartRealTimeData;
+
+        /// <summary>C11停止察看污染物实时数据</summary>
+        event ActivelyPushDataEventHandler<RspInfo> OnStopRealTimeData;
+
         Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
