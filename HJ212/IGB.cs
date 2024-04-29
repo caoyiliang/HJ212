@@ -16,7 +16,7 @@ namespace HJ212
         event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)> OnSetSystemTime;
 
         /// <summary>C4现场机时间校准请求</summary>
-        Task AskSetSystemTime(string polId);
+        Task AskSetSystemTime(string polId, int timeout = -1);
 
         /// <summary>C5提取实时数据间隔</summary>
         event ActivelyAskDataEventHandler<RspInfo, int> OnGetRealTimeDataInterval;
@@ -50,6 +50,9 @@ namespace HJ212
 
         /// <summary>C14上传污染物实时数据(无返回变体)</summary>
         Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data);
+
+        /// <summary>C15上传设备运行状态数据</summary>
+        Task RequestRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
 

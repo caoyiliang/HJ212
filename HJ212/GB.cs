@@ -185,9 +185,9 @@ namespace HJ212
         #endregion
 
         #region c4
-        public async Task AskSetSystemTime(string polId)
+        public async Task AskSetSystemTime(string polId, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(_mn, _pw, _st, polId));
+            await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(_mn, _pw, _st, polId), timeout);
         }
         #endregion
 
@@ -383,12 +383,19 @@ namespace HJ212
         #region c14
         public async Task RequestRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestRealTimeDataReq, RequestRealTimeDataRsp>(new RequestRealTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<RequestRealTimeDataReq, CN9014Rsp>(new RequestRealTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
         }
 
         public async Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data)
         {
             await _pigeonPort.SendAsync(new SendRealTimeDataReq(_mn, _pw, _qn, _st, dataTime, data));
+        }
+        #endregion
+
+        #region c15
+        public async Task RequestRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<RequestRunningStateDataReq, CN9014Rsp>(new RequestRunningStateDataReq(_mn, _pw, _st, dataTime, data), timeout);
         }
         #endregion
     }

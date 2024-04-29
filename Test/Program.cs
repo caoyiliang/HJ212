@@ -114,6 +114,14 @@ try
 catch (TimeoutException) { }
 
 await gb.SendRealTimeData(DateTime.Now, realTimeDatas);
+
+try
+{
+    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+    await gb.RequestRunningStateData(DateTime.Now, [new RunningStateData("SB1", "1"), new RunningStateData("SB2", "2")]);
+}
+catch (TimeoutException) { }
+
 await gb.SendMinuteData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });
 await gb.SendHourData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });
 await gb.SendDayData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });

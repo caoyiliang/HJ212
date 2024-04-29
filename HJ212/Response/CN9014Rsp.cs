@@ -5,7 +5,7 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class RequestRealTimeDataRsp : IAsyncResponse<RspInfo>
+    internal class CN9014Rsp : IAsyncResponse<RspInfo>
     {
         private RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
