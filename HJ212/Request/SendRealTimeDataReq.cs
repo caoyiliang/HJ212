@@ -1,13 +1,14 @@
-﻿using System.Text;
+﻿using HJ212.Model;
+using System.Text;
 using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class SendRealTimeDataReq(string mn, bool flag, string pw, bool qn, ST st, DateTime dataTime, Dictionary<string, (string? value, string? flag)> data) : IByteStream
+    internal class SendRealTimeDataReq(string mn, string pw, bool qn, ST st, DateTime dataTime, List<RealTimeData> data) : IByteStream
     {
         public byte[] ToBytes()
         {
-            var rs = $"{(qn ? $"QN={DateTime.Now:yyyyMMddHHmmssfff};" : "")}ST={(int)st};CN={(int)CN.实时数据};PW={pw};MN={mn};CP=&&DataTime={dataTime:yyyyMMddHHmmss},{string.Join(";", data.Select(c => $"{c.Key}-Rtd={c.Value.value}{(flag ? $",{c.Key}-Flag={c.Value.flag}" : "")}"))}&&";
+            var rs = $"{(qn ? $"QN={DateTime.Now:yyyyMMddHHmmssfff};" : "")}ST={(int)st};CN={(int)CN.实时数据};PW={pw};MN={mn};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{(c.SampleTime != null ? $",{c.Name}-SampleTime={c.SampleTime}," : "")}{c.Name}-Rtd={c.Rtd}{(c.Flag != null ? $",{c.Name}-Flag={c.Flag}" : "")}{(c.EFlag != null ? $",{c.Name}-EFlag={c.EFlag}" : "")}"))}&&";
             rs = GB.GetGbCmd(rs);
             return Encoding.ASCII.GetBytes(rs);
         }

@@ -1,5 +1,6 @@
 ﻿using Communication;
 using Communication.Interfaces;
+using HJ212.Model;
 using HJ212.Request;
 using HJ212.Response;
 using LogInterface;
@@ -64,31 +65,31 @@ namespace HJ212
                     return Task.FromResult(new GetDataLengthRsp() { Length = 4, StateCode = Parser.StateCode.Success });
                 }
             })));
-            _pigeonPort.OnDisconnect += _pigeonPort_OnDisconnect;
-            _pigeonPort.OnConnect += _pigeonPort_OnConnect;
-            _pigeonPort.OnSentData += _pigeonPort_OnSentData;
-            _pigeonPort.OnReceivedData += _pigeonPort_OnReceivedData;
+            _pigeonPort.OnDisconnect += PigeonPort_OnDisconnect;
+            _pigeonPort.OnConnect += PigeonPort_OnConnect;
+            _pigeonPort.OnSentData += PigeonPort_OnSentData;
+            _pigeonPort.OnReceivedData += PigeonPort_OnReceivedData;
         }
 
-        private async Task _pigeonPort_OnReceivedData(byte[] data)
+        private async Task PigeonPort_OnReceivedData(byte[] data)
         {
             _logger.Trace($"{_name} GB Rec:<-- {StringByteUtils.BytesToString(data)}");
             await Task.CompletedTask;
         }
 
-        private async Task _pigeonPort_OnSentData(byte[] data)
+        private async Task PigeonPort_OnSentData(byte[] data)
         {
             _logger.Trace($"{_name} GB Sent:<-- {StringByteUtils.BytesToString(data)}");
             await Task.CompletedTask;
         }
 
-        private async Task _pigeonPort_OnConnect()
+        private async Task PigeonPort_OnConnect()
         {
             _isConnect = true;
             await Task.CompletedTask;
         }
 
-        private async Task _pigeonPort_OnDisconnect()
+        private async Task PigeonPort_OnDisconnect()
         {
             _isConnect = false;
             await Task.CompletedTask;
@@ -102,11 +103,6 @@ namespace HJ212
         {
             var brs = Encoding.ASCII.GetBytes(rs);
             return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}\r\n";
-        }
-
-        public async Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data)
-        {
-            await _pigeonPort.SendAsync(new SendRealTimeDataReq(_mn, _flag, _pw, _qn, _st, dataTime, data));
         }
 
         public async Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data)
@@ -381,6 +377,18 @@ namespace HJ212
                     }
                 });
             }
+        }
+        #endregion
+
+        #region c14
+        public async Task RequestRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<RequestRealTimeDataReq, RequestRealTimeDataRsp>(new RequestRealTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
+        }
+
+        public async Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data)
+        {
+            await _pigeonPort.SendAsync(new SendRealTimeDataReq(_mn, _pw, _qn, _st, dataTime, data));
         }
         #endregion
     }

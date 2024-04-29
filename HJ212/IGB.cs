@@ -1,5 +1,5 @@
 ﻿using Communication;
-using HJ212.Response;
+using HJ212.Model;
 using ProtocolInterface;
 
 namespace HJ212
@@ -45,7 +45,11 @@ namespace HJ212
         /// <summary>C13停止察看设备运行状态</summary>
         event ActivelyPushDataEventHandler<RspInfo> OnStopRunningStateData;
 
-        Task SendRealTimeData(DateTime dataTime, Dictionary<string, (string? value, string? flag)> data);
+        /// <summary>C14上传污染物实时数据</summary>
+        Task RequestRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1);
+
+        /// <summary>C14上传污染物实时数据(无返回变体)</summary>
+        Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data);
 
         Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
 

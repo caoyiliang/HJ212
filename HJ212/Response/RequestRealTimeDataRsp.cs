@@ -1,11 +1,11 @@
-﻿using System.Text;
-using HJ212.Model;
+﻿using HJ212.Model;
+using System.Text;
 using TopPortLib.Interfaces;
 using Utils;
 
 namespace HJ212.Response
 {
-    internal class StopRunningStateDataRsp : IAsyncResponse<RspInfo>
+    internal class RequestRealTimeDataRsp : IAsyncResponse<RspInfo>
     {
         private RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
@@ -28,7 +28,8 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=2022")).Any(), default);
+            var qn = rs.SingleOrDefault(item => item.Contains("QN"))?.Split('=')[1];
+            return (rs.Where(item => item.Contains("CN=9014")).Any(), qn == null ? default : Encoding.ASCII.GetBytes(qn));
         }
 
         public RspInfo GetResult()

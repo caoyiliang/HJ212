@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using HJ212.Model;
 using TopPortLib.Interfaces;
 using Utils;
 
@@ -28,7 +29,7 @@ namespace HJ212.Response
             await Task.CompletedTask;
         }
 
-        public bool Check(byte[] bytes)
+        public (bool Type, byte[]? CheckBytes) Check(byte[] bytes)
         {
             var data = bytes.Skip(6).ToArray();
             var dstr = Encoding.ASCII.GetString(data);
@@ -37,7 +38,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return rs.Where(item => item.Contains("CN=1000")).Any();
+            return (rs.Where(item => item.Contains("CN=1000")).Any(), default);
         }
 
         public (int OverTime, int ReCount, RspInfo RspInfo) GetResult()

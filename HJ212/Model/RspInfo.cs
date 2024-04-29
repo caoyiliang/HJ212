@@ -1,4 +1,4 @@
-﻿namespace HJ212.Response
+﻿namespace HJ212.Model
 {
     public class RspInfo
     {

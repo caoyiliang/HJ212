@@ -1,4 +1,4 @@
-﻿using HJ212.Response;
+﻿using HJ212.Model;
 using System.Text;
 using TopPortLib.Interfaces;
 
