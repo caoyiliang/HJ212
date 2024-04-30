@@ -54,7 +54,11 @@ namespace HJ212
         /// <summary>C15上传设备运行状态数据</summary>
         Task RequestRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1);
 
-        Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
+        /// <summary>C16上传污染物分钟数据</summary>
+        Task RequestMinuteData(DateTime dataTime, List<MinuteData> data, int timeout = -1);
+
+        /// <summary>C16上传污染物分钟数据(无返回变体)</summary>
+        Task SendMinuteData(DateTime dataTime, List<MinuteData> data);
 
         Task SendHourData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
 

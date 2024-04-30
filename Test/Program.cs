@@ -103,8 +103,8 @@ catch (TimeoutException) { }
 
 List<RealTimeData> realTimeDatas =
 [
-    new RealTimeData("a1001", "50.4"){Flag="N"},
-    new RealTimeData("a1002", "35.2"){Flag="D"}
+    new RealTimeData("a1001"){Rtd="50.4",Flag="N"},
+    new RealTimeData("a1002"){Rtd="35.2",Flag="D"}
 ];
 try
 {
@@ -122,7 +122,21 @@ try
 }
 catch (TimeoutException) { }
 
-await gb.SendMinuteData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });
+List<MinuteData> minuteDatas =
+[
+    new MinuteData("a1001"){Min="30.7",Avg="50.4",Max="60.5",Flag="N"},
+    new MinuteData("a1002"){Min="10.2",Avg="35.2",Max="50.1",Flag="D"}
+];
+
+try
+{
+    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+    await gb.RequestMinuteData(DateTime.Now, minuteDatas, 120000);
+}
+catch (TimeoutException) { }
+
+await gb.SendMinuteData(DateTime.Now, minuteDatas);
+
 await gb.SendHourData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });
 await gb.SendDayData(DateTime.Now, new Dictionary<string, (string? avgValue, string? max, string? min, string? flag)>() { { "a1001", ("50.4", "60.5", "30.7", "N") }, { "a1002", ("35.2", "50.1", "10.2", "D") } });
 

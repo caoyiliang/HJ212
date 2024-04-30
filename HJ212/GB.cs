@@ -105,11 +105,6 @@ namespace HJ212
             return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}\r\n";
         }
 
-        public async Task SendMinuteData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data)
-        {
-            await _pigeonPort.SendAsync(new SendMinuteDataReq(_mn, _flag, _pw, _qn, _st, dataTime, data));
-        }
-
         public async Task SendHourData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data)
         {
             await _pigeonPort.SendAsync(new SendHourDataReq(_mn, _flag, _pw, _qn, _st, dataTime, data));
@@ -396,6 +391,18 @@ namespace HJ212
         public async Task RequestRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<RequestRunningStateDataReq, CN9014Rsp>(new RequestRunningStateDataReq(_mn, _pw, _st, dataTime, data), timeout);
+        }
+        #endregion
+
+        #region c16
+        public async Task RequestMinuteData(DateTime dataTime, List<MinuteData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<RequestMinuteDataReq, CN9014Rsp>(new RequestMinuteDataReq(_mn, _pw, _st, dataTime, data), timeout);
+        }
+
+        public async Task SendMinuteData(DateTime dataTime, List<MinuteData> data)
+        {
+            await _pigeonPort.SendAsync(new SendMinuteDataReq(_mn, _pw, _qn, _st, dataTime, data));
         }
         #endregion
     }
