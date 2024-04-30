@@ -46,34 +46,34 @@ namespace HJ212
         event ActivelyPushDataEventHandler<RspInfo> OnStopRunningStateData;
 
         /// <summary>C14上传污染物实时数据</summary>
-        Task RequestRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1);
+        Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1);
 
         /// <summary>C14上传污染物实时数据(无返回变体)</summary>
         Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data);
 
         /// <summary>C15上传设备运行状态数据</summary>
-        Task RequestRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1);
+        Task UploadRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1);
 
         /// <summary>C16上传污染物分钟数据</summary>
-        Task RequestMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
+        Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
 
         /// <summary>C16上传污染物分钟数据(无返回变体)</summary>
         Task SendMinuteData(DateTime dataTime, List<StatisticsData> data);
 
         /// <summary>C17上传污染物小时数据</summary>
-        Task RequestHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
+        Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
 
         /// <summary>C17上传污染物小时数据(无返回变体)</summary>
         Task SendHourData(DateTime dataTime, List<StatisticsData> data);
 
         /// <summary>C18上传污染物日历史数据</summary>
-        Task RequestDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
+        Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
 
         /// <summary>C18上传污染物日历史数据(无返回变体)</summary>
         Task SendDayData(DateTime dataTime, List<StatisticsData> data);
 
         /// <summary>C19上传设备运行时间日历史数据</summary>
-        Task RequestRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1);
+        Task UploadRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1);
 
         /// <summary>C20取污染物分钟历史数据</summary>
         event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetMinuteData;
@@ -86,5 +86,8 @@ namespace HJ212
 
         /// <summary>C23取设备运行时间日历史数据</summary>
         event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<RunningTimeData> Data)> OnGetRunningTimeData;
+
+        /// <summary>C24上传数采仪开机时间</summary>
+        Task UploadAcquisitionDeviceRestartTime(DateTime dataTime, DateTime restartTime, int timeout = -1);
     }
 }

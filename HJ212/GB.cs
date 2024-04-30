@@ -368,9 +368,9 @@ namespace HJ212
         #endregion
 
         #region c14
-        public async Task RequestRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
+        public async Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestRealTimeDataReq, CN9014Rsp>(new RequestRealTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadRealTimeDataReq, CN9014Rsp>(new UploadRealTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
         }
 
         public async Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data)
@@ -380,16 +380,16 @@ namespace HJ212
         #endregion
 
         #region c15
-        public async Task RequestRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1)
+        public async Task UploadRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestRunningStateDataReq, CN9014Rsp>(new RequestRunningStateDataReq(_mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadRunningStateDataReq, CN9014Rsp>(new UploadRunningStateDataReq(_mn, _pw, _st, dataTime, data), timeout);
         }
         #endregion
 
         #region c16
-        public async Task RequestMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestStatisticsDataReq, CN9014Rsp>(new RequestStatisticsDataReq(CN.分钟数据, _mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.分钟数据, _mn, _pw, _st, dataTime, data), timeout);
         }
 
         public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data)
@@ -399,9 +399,9 @@ namespace HJ212
         #endregion
 
         #region c17
-        public async Task RequestHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestStatisticsDataReq, CN9014Rsp>(new RequestStatisticsDataReq(CN.小时数据, _mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.小时数据, _mn, _pw, _st, dataTime, data), timeout);
         }
 
         public async Task SendHourData(DateTime dataTime, List<StatisticsData> data)
@@ -411,9 +411,9 @@ namespace HJ212
         #endregion
 
         #region c18
-        public async Task RequestDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestStatisticsDataReq, CN9014Rsp>(new RequestStatisticsDataReq(CN.日历史数据, _mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.日历史数据, _mn, _pw, _st, dataTime, data), timeout);
         }
 
         public async Task SendDayData(DateTime dataTime, List<StatisticsData> data)
@@ -423,9 +423,9 @@ namespace HJ212
         #endregion
 
         #region c19
-        public async Task RequestRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1)
+        public async Task UploadRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestRunningTimeDataReq, CN9014Rsp>(new RequestRunningTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadRunningTimeDataReq, CN9014Rsp>(new UploadRunningTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
         }
         #endregion
 
@@ -509,11 +509,18 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new RequestRunningTimeDataReq(_mn, _pw, _st, t.Result.DataTime, t.Result.Data));
+                        await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(_mn, _pw, _st, t.Result.DataTime, t.Result.Data));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
             }
+        }
+        #endregion
+
+        #region c24
+        public async Task UploadAcquisitionDeviceRestartTime(DateTime dataTime, DateTime restartTime, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadAcquisitionDeviceRestartTimeReq, CN9014Rsp>(new UploadAcquisitionDeviceRestartTimeReq(_mn, _pw, _st, dataTime, restartTime), timeout);
         }
         #endregion
     }

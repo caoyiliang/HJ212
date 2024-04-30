@@ -137,7 +137,7 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20240429103553533;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.RequestRealTimeData(DateTime.Now, realTimeDatas);
+//    await gb.UploadRealTimeData(DateTime.Now, realTimeDatas);
 //}
 //catch (TimeoutException) { }
 //await gb.SendRealTimeData(DateTime.Now, realTimeDatas);
@@ -145,7 +145,7 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.RequestRunningStateData(DateTime.Now, [new RunningStateData("SB1", "1"), new RunningStateData("SB2", "2")]);
+//    await gb.UploadRunningStateData(DateTime.Now, [new RunningStateData("SB1", "1"), new RunningStateData("SB2", "2")]);
 //}
 //catch (TimeoutException) { }
 
@@ -157,7 +157,7 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.RequestMinuteData(DateTime.Now, statisticsDatas);
+//    await gb.UploadMinuteData(DateTime.Now, statisticsDatas);
 //}
 //catch (TimeoutException) { }
 //await gb.SendMinuteData(DateTime.Now, statisticsDatas);
@@ -165,7 +165,7 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.RequestHourData(DateTime.Now, statisticsDatas);
+//    await gb.UploadHourData(DateTime.Now, statisticsDatas);
 //}
 //catch (TimeoutException) { }
 //await gb.SendHourData(DateTime.Now, statisticsDatas);
@@ -173,7 +173,7 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.RequestDayData(DateTime.Now, statisticsDatas);
+//    await gb.UploadDayData(DateTime.Now, statisticsDatas);
 //}
 //catch (TimeoutException) { }
 //await gb.SendDayData(DateTime.Now, statisticsDatas);
@@ -181,8 +181,16 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.RequestRunningTimeData(DateTime.Now, [new RunningTimeData("SB1", "1"), new RunningTimeData("SB2", "2")]);
+//    await gb.UploadRunningTimeData(DateTime.Now, [new RunningTimeData("SB1", "1"), new RunningTimeData("SB2", "2")]);
 //}
 //catch (TimeoutException) { }
 
+//try
+//{
+//    //测试 QN=20160801085857223;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.UploadAcquisitionDeviceRestartTime(DateTime.Now, DateTime.Now);
+//}
+//catch (TimeoutException) { }
+
+Console.WriteLine("OK");
 Console.ReadLine();
