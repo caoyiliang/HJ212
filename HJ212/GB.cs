@@ -419,5 +419,12 @@ namespace HJ212
             await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, _mn, _pw, _qn, _st, dataTime, data));
         }
         #endregion
+
+        #region c19
+        public async Task RequestRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<RequestRunningTimeDataReq, CN9014Rsp>(new RequestRunningTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
+        }
+        #endregion
     }
 }

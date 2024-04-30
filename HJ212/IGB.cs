@@ -71,5 +71,8 @@ namespace HJ212
 
         /// <summary>C18上传污染物日历史数据(无返回变体)</summary>
         Task SendDayData(DateTime dataTime, List<StatisticsData> data);
+
+        /// <summary>C19上传设备运行时间日历史数据</summary>
+        Task RequestRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1);
     }
 }

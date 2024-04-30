@@ -150,4 +150,11 @@ try
 catch (TimeoutException) { }
 await gb.SendDayData(DateTime.Now, statisticsDatas);
 
+try
+{
+    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+    await gb.RequestRunningTimeData(DateTime.Now, [new RunningTimeData("SB1", "1"), new RunningTimeData("SB2", "2")]);
+}
+catch (TimeoutException) { }
+
 Console.ReadLine();
