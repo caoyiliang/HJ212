@@ -1,6 +1,6 @@
 ﻿namespace HJ212.Model
 {
-    public class MinuteData(string name)
+    public class StatisticsData(string name)
     {
         public string Name { get; set; } = name;
         public string? Cou { get; set; }

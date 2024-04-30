@@ -105,16 +105,6 @@ namespace HJ212
             return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}\r\n";
         }
 
-        public async Task SendHourData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data)
-        {
-            await _pigeonPort.SendAsync(new SendHourDataReq(_mn, _flag, _pw, _qn, _st, dataTime, data));
-        }
-
-        public async Task SendDayData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data)
-        {
-            await _pigeonPort.SendAsync(new SendDayDataReq(_mn, _flag, _pw, _qn, _st, dataTime, data));
-        }
-
         #region c1
         private async Task SetOverTimeAndReCountRspEvent((int OverTime, int ReCount, RspInfo RspInfo) rs)
         {
@@ -395,14 +385,38 @@ namespace HJ212
         #endregion
 
         #region c16
-        public async Task RequestMinuteData(DateTime dataTime, List<MinuteData> data, int timeout = -1)
+        public async Task RequestMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<RequestMinuteDataReq, CN9014Rsp>(new RequestMinuteDataReq(_mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<RequestStatisticsDataReq, CN9014Rsp>(new RequestStatisticsDataReq(CN.分钟数据, _mn, _pw, _st, dataTime, data), timeout);
         }
 
-        public async Task SendMinuteData(DateTime dataTime, List<MinuteData> data)
+        public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data)
         {
-            await _pigeonPort.SendAsync(new SendMinuteDataReq(_mn, _pw, _qn, _st, dataTime, data));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, _mn, _pw, _qn, _st, dataTime, data));
+        }
+        #endregion
+
+        #region c17
+        public async Task RequestHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<RequestStatisticsDataReq, CN9014Rsp>(new RequestStatisticsDataReq(CN.小时数据, _mn, _pw, _st, dataTime, data), timeout);
+        }
+
+        public async Task SendHourData(DateTime dataTime, List<StatisticsData> data)
+        {
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.小时数据, _mn, _pw, _qn, _st, dataTime, data));
+        }
+        #endregion
+
+        #region c18
+        public async Task RequestDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<RequestStatisticsDataReq, CN9014Rsp>(new RequestStatisticsDataReq(CN.日历史数据, _mn, _pw, _st, dataTime, data), timeout);
+        }
+
+        public async Task SendDayData(DateTime dataTime, List<StatisticsData> data)
+        {
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, _mn, _pw, _qn, _st, dataTime, data));
         }
         #endregion
     }

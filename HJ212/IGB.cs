@@ -55,13 +55,21 @@ namespace HJ212
         Task RequestRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1);
 
         /// <summary>C16上传污染物分钟数据</summary>
-        Task RequestMinuteData(DateTime dataTime, List<MinuteData> data, int timeout = -1);
+        Task RequestMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
 
         /// <summary>C16上传污染物分钟数据(无返回变体)</summary>
-        Task SendMinuteData(DateTime dataTime, List<MinuteData> data);
+        Task SendMinuteData(DateTime dataTime, List<StatisticsData> data);
 
-        Task SendHourData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
+        /// <summary>C17上传污染物小时数据</summary>
+        Task RequestHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
 
-        Task SendDayData(DateTime dataTime, Dictionary<string, (string? avgValue, string? max, string? min, string? flag)> data);
+        /// <summary>C17上传污染物小时数据(无返回变体)</summary>
+        Task SendHourData(DateTime dataTime, List<StatisticsData> data);
+
+        /// <summary>C18上传污染物日历史数据</summary>
+        Task RequestDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
+
+        /// <summary>C18上传污染物日历史数据(无返回变体)</summary>
+        Task SendDayData(DateTime dataTime, List<StatisticsData> data);
     }
 }
