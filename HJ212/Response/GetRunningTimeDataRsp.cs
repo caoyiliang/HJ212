@@ -5,7 +5,7 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class GetMinuteDataRsp : IAsyncResponse<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo)>
+    internal class GetRunningTimeDataRsp : IAsyncResponse<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo)>
     {
         private DateTime _beginTime;
         private DateTime _endTime;
@@ -20,11 +20,11 @@ namespace HJ212.Response
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
             if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("BeginTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _beginTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Get MinuteData BeginTime Error");
+                throw new ArgumentException($"{GB._name} HJ212 Get RunningTimeData BeginTime Error");
             }
             if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("EndTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _endTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Get MinuteData EndTime Error");
+                throw new ArgumentException($"{GB._name} HJ212 Get RunningTimeData EndTime Error");
             }
             await Task.CompletedTask;
         }
@@ -38,7 +38,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=2051")).Any(), default);
+            return (rs.Where(item => item.Contains("CN=2041")).Any(), default);
         }
 
         public (DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) GetResult()

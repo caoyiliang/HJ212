@@ -21,6 +21,13 @@ gb.OnStopRunningStateData += Gb_OnStopRunningStateData;
 gb.OnGetMinuteData += Gb_OnGetMinuteData;
 gb.OnGetHourData += Gb_OnGetHourData;
 gb.OnGetDayData += Gb_OnGetDayData;
+gb.OnGetRunningTimeData += Gb_OnGetRunningTimeData;
+
+//测试 QN=20160801085857223;ST=32;CN=2041;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801000000,EndTime=20160801000000&&
+async Task<(DateTime DataTime, List<RunningTimeData> Data)> Gb_OnGetRunningTimeData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
+{
+    return await Task.FromResult((DateTime.Now, new List<RunningTimeData> { new("SB1", "1") }));
+}
 
 //测试 QN=20160801085857223;ST=32;CN=2031;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801000000;EndTime=20160801000000&&
 async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetDayData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
