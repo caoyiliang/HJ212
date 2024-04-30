@@ -5,10 +5,10 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class SetSystemTimeRsp : IAsyncResponse<(string? PolId, DateTime SystemTime, RspInfo RspInfo)>
+    internal class GetMinuteDataRsp : IAsyncResponse<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo)>
     {
-        private string? _polId;
-        private DateTime _systemTime;
+        private DateTime _beginTime;
+        private DateTime _endTime;
         private RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
         {
@@ -18,10 +18,13 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1];
-            if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("SystemTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _systemTime))
+            if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("BeginTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _beginTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set SystemTime Error");
+                throw new ArgumentException($"{GB._name} HJ212 Set BeginTime Error");
+            }
+            if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("EndTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _endTime))
+            {
+                throw new ArgumentException($"{GB._name} HJ212 Set EndTime Error");
             }
             await Task.CompletedTask;
         }
@@ -35,12 +38,12 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=1012")).Any(), default);
+            return (rs.Where(item => item.Contains("CN=2051")).Any(), default);
         }
 
-        public (string? PolId, DateTime SystemTime, RspInfo RspInfo) GetResult()
+        public (DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) GetResult()
         {
-            return (_polId, _systemTime, _rspInfo);
+            return (_beginTime, _endTime, _rspInfo);
         }
     }
 }

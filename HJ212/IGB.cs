@@ -74,5 +74,8 @@ namespace HJ212
 
         /// <summary>C19上传设备运行时间日历史数据</summary>
         Task RequestRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1);
+
+        /// <summary>C20取污染物分钟历史数据</summary>
+        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetMinuteData;
     }
 }

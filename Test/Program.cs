@@ -18,6 +18,13 @@ gb.OnStartRealTimeData += Gb_OnStartRealTimeData;
 gb.OnStopRealTimeData += Gb_OnStopRealTimeData;
 gb.OnStartRunningStateData += Gb_OnStartRunningStateData;
 gb.OnStopRunningStateData += Gb_OnStopRunningStateData;
+gb.OnGetMinuteData += Gb_OnGetMinuteData;
+
+//测试 QN=20160801085857223;ST=32;CN=2051;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801084000;EndTime=20160801084000&&
+async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetMinuteData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
+{
+    return await Task.FromResult((DateTime.Now, new List<StatisticsData> { new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" } }));
+}
 
 //测试 QN=20160801085857223;ST=32;CN=2022;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
 async Task Gb_OnStopRunningStateData(RspInfo objects)
@@ -94,67 +101,67 @@ async Task Gb_OnSetOverTimeAndReCount((int OverTime, int ReCount, RspInfo RspInf
 
 await gb.OpenAsync();
 
-try
-{
-    //测试 QN=20160801085857223;ST=91;CN=9013;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&& &&
-    await gb.AskSetSystemTime("a1001");
-}
-catch (TimeoutException) { }
+//try
+//{
+//    //测试 QN=20160801085857223;ST=91;CN=9013;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&& &&
+//    await gb.AskSetSystemTime("a1001");
+//}
+//catch (TimeoutException) { }
 
-List<RealTimeData> realTimeDatas =
-[
-    new RealTimeData("a1001"){Rtd="50.4",Flag="N"},
-    new RealTimeData("a1002"){Rtd="35.2",Flag="D"}
-];
-try
-{
-    //测试 QN=20240429103553533;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.RequestRealTimeData(DateTime.Now, realTimeDatas);
-}
-catch (TimeoutException) { }
-await gb.SendRealTimeData(DateTime.Now, realTimeDatas);
+//List<RealTimeData> realTimeDatas =
+//[
+//    new RealTimeData("a1001"){Rtd="50.4",Flag="N"},
+//    new RealTimeData("a1002"){Rtd="35.2",Flag="D"}
+//];
+//try
+//{
+//    //测试 QN=20240429103553533;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.RequestRealTimeData(DateTime.Now, realTimeDatas);
+//}
+//catch (TimeoutException) { }
+//await gb.SendRealTimeData(DateTime.Now, realTimeDatas);
 
-try
-{
-    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.RequestRunningStateData(DateTime.Now, [new RunningStateData("SB1", "1"), new RunningStateData("SB2", "2")]);
-}
-catch (TimeoutException) { }
+//try
+//{
+//    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.RequestRunningStateData(DateTime.Now, [new RunningStateData("SB1", "1"), new RunningStateData("SB2", "2")]);
+//}
+//catch (TimeoutException) { }
 
-List<StatisticsData> statisticsDatas =
-[
-    new StatisticsData("a1001"){Min="30.7",Avg="50.4",Max="60.5",Flag="N"},
-    new StatisticsData("a1002"){Min="10.2",Avg="35.2",Max="50.1",Flag="D"}
-];
-try
-{
-    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.RequestMinuteData(DateTime.Now, statisticsDatas);
-}
-catch (TimeoutException) { }
-await gb.SendMinuteData(DateTime.Now, statisticsDatas);
+//List<StatisticsData> statisticsDatas =
+//[
+//    new StatisticsData("a1001"){Min="30.7",Avg="50.4",Max="60.5",Flag="N"},
+//    new StatisticsData("a1002"){Min="10.2",Avg="35.2",Max="50.1",Flag="D"}
+//];
+//try
+//{
+//    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.RequestMinuteData(DateTime.Now, statisticsDatas);
+//}
+//catch (TimeoutException) { }
+//await gb.SendMinuteData(DateTime.Now, statisticsDatas);
 
-try
-{
-    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.RequestHourData(DateTime.Now, statisticsDatas);
-}
-catch (TimeoutException) { }
-await gb.SendHourData(DateTime.Now, statisticsDatas);
+//try
+//{
+//    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.RequestHourData(DateTime.Now, statisticsDatas);
+//}
+//catch (TimeoutException) { }
+//await gb.SendHourData(DateTime.Now, statisticsDatas);
 
-try
-{
-    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.RequestDayData(DateTime.Now, statisticsDatas);
-}
-catch (TimeoutException) { }
-await gb.SendDayData(DateTime.Now, statisticsDatas);
+//try
+//{
+//    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.RequestDayData(DateTime.Now, statisticsDatas);
+//}
+//catch (TimeoutException) { }
+//await gb.SendDayData(DateTime.Now, statisticsDatas);
 
-try
-{
-    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.RequestRunningTimeData(DateTime.Now, [new RunningTimeData("SB1", "1"), new RunningTimeData("SB2", "2")]);
-}
-catch (TimeoutException) { }
+//try
+//{
+//    //测试 QN=20240429114224393;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.RequestRunningTimeData(DateTime.Now, [new RunningTimeData("SB1", "1"), new RunningTimeData("SB2", "2")]);
+//}
+//catch (TimeoutException) { }
 
 Console.ReadLine();

@@ -17,7 +17,6 @@ namespace HJ212
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<GB>();
         private readonly string _mn;
-        private readonly bool _flag;
         private readonly string _pw;
         private readonly bool _qn;
         private readonly ST _st;
@@ -40,16 +39,16 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRealTimeData;
         public event ActivelyPushDataEventHandler<RspInfo>? OnStartRunningStateData;
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRunningStateData;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)>? OnGetMinuteData;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _pigeonPort.OnConnect += value; remove => _pigeonPort.OnConnect -= value; }
-        public GB(string name, IPhysicalPort physicalPort, string mn, bool flag = true, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源)
+        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源)
         {
             _name = name;
             _mn = mn;
-            _flag = flag;
             _pw = pw;
             _qn = qn;
             _st = st;
@@ -424,6 +423,28 @@ namespace HJ212
         public async Task RequestRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<RequestRunningTimeDataReq, CN9014Rsp>(new RequestRunningTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
+        }
+        #endregion
+
+        #region c20
+        private async Task GetMinuteDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
+        {
+            if (OnGetMinuteData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnGetMinuteData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetMinuteData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, _mn, _pw, _qn, _st, t.Result.DataTime, t.Result.Data));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
         }
         #endregion
     }
