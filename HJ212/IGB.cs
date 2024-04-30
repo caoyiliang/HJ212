@@ -77,5 +77,11 @@ namespace HJ212
 
         /// <summary>C20取污染物分钟历史数据</summary>
         event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetMinuteData;
+
+        /// <summary>C21取污染物小时历史数据</summary>
+        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetHourData;
+
+        /// <summary>C22取污染物日历史数据</summary>
+        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetDayData;
     }
 }

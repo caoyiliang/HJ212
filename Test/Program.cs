@@ -19,6 +19,20 @@ gb.OnStopRealTimeData += Gb_OnStopRealTimeData;
 gb.OnStartRunningStateData += Gb_OnStartRunningStateData;
 gb.OnStopRunningStateData += Gb_OnStopRunningStateData;
 gb.OnGetMinuteData += Gb_OnGetMinuteData;
+gb.OnGetHourData += Gb_OnGetHourData;
+gb.OnGetDayData += Gb_OnGetDayData;
+
+//测试 QN=20160801085857223;ST=32;CN=2031;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801000000;EndTime=20160801000000&&
+async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetDayData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
+{
+    return await Task.FromResult((DateTime.Now, new List<StatisticsData> { new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" } }));
+}
+
+//测试 QN=20160801085857223;ST=32;CN=2061;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801080000;EndTime=20160801080000&&
+async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetHourData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
+{
+    return await Task.FromResult((DateTime.Now, new List<StatisticsData> { new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" } }));
+}
 
 //测试 QN=20160801085857223;ST=32;CN=2051;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801084000;EndTime=20160801084000&&
 async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetMinuteData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)

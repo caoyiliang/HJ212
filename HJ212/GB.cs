@@ -40,6 +40,8 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<RspInfo>? OnStartRunningStateData;
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRunningStateData;
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)>? OnGetMinuteData;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)>? OnGetHourData;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)>? OnGetDayData;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -441,6 +443,50 @@ namespace HJ212
                     else
                     {
                         await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, _mn, _pw, _qn, _st, t.Result.DataTime, t.Result.Data));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c21
+        private async Task GetHourDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
+        {
+            if (OnGetHourData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnGetHourData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetHourData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.小时数据, _mn, _pw, _qn, _st, t.Result.DataTime, t.Result.Data));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c22
+        private async Task GetDayDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
+        {
+            if (OnGetDayData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnGetDayData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetDayData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, _mn, _pw, _qn, _st, t.Result.DataTime, t.Result.Data));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
