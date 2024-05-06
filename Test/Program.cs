@@ -27,6 +27,13 @@ gb.OnRealTimeSampling += Gb_OnRealTimeSampling;
 gb.OnStartCleaningOrBlowback += Gb_OnStartCleaningOrBlowback;
 gb.OnComparisonSampling += Gb_OnComparisonSampling;
 gb.OnOutOfStandardRetentionSample += Gb_OnOutOfStandardRetentionSample;
+gb.OnSetSamplingPeriod += Gb_OnSetSamplingPeriod;
+
+//测试 QN=20160801085857223;ST=32;CN=3016;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018;CstartTime=000000;CTime=2&&
+async Task Gb_OnSetSamplingPeriod((TimeOnly CstartTime, int Ctime, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 //测试 QN=20160801085857223;ST=32;CN=3015;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
 async Task<(DateTime DataTime, int VaseNo)> Gb_OnOutOfStandardRetentionSample(RspInfo objects)

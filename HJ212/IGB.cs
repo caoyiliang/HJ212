@@ -119,5 +119,8 @@ namespace HJ212
 
         /// <summary>C34超标留样</summary>
         event ActivelyAskDataEventHandler<RspInfo, (DateTime DataTime, int VaseNo)> OnOutOfStandardRetentionSample;
+
+        /// <summary>C35设置采样时间周期</summary>
+        event ActivelyPushDataEventHandler<(TimeOnly CstartTime, int Ctime, RspInfo RspInfo)> OnSetSamplingPeriod;
     }
 }
