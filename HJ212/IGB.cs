@@ -122,5 +122,8 @@ namespace HJ212
 
         /// <summary>C35设置采样时间周期</summary>
         event ActivelyPushDataEventHandler<(string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo)> OnSetSamplingPeriod;
+
+        /// <summary>C36提取采样时间周期</summary>
+        event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (TimeOnly CstartTime, int Ctime)> OnGetSamplingPeriod;
     }
 }
