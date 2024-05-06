@@ -45,6 +45,8 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<RunningTimeData> Data)>? OnGetRunningTimeData;
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnCalibrate;
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnRealTimeSampling;
+        public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnStartCleaningOrBlowback;
+        public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnComparisonSampling;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -586,6 +588,48 @@ namespace HJ212
                     if (t.Exception != null)
                     {
                         _logger.Error($"{_name} GB RealTimeSampling Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c32
+        private async Task StartCleaningOrBlowbackRspEvent((string PolId, RspInfo RspInfo) rs)
+        {
+            if (OnStartCleaningOrBlowback is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnStartCleaningOrBlowback(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB StartCleaningOrBlowback Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c33
+        private async Task ComparisonSamplingRspEvent((string PolId, RspInfo RspInfo) rs)
+        {
+            if (OnComparisonSampling is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnComparisonSampling(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB ComparisonSampling Error\n{t.Exception}");
                     }
                     else
                     {

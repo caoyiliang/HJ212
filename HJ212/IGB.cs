@@ -110,5 +110,11 @@ namespace HJ212
 
         /// <summary>C31即时采样</summary>
         event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)> OnRealTimeSampling;
+
+        /// <summary>C32启动清洗/反吹</summary>
+        event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)> OnStartCleaningOrBlowback;
+
+        /// <summary>C33比对采样</summary>
+        event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)> OnComparisonSampling;
     }
 }
