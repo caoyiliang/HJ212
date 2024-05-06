@@ -48,7 +48,7 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnStartCleaningOrBlowback;
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnComparisonSampling;
         public event ActivelyAskDataEventHandler<RspInfo, (DateTime DataTime, int VaseNo)>? OnOutOfStandardRetentionSample;
-        public event ActivelyPushDataEventHandler<(TimeOnly CstartTime, int Ctime, RspInfo RspInfo)>? OnSetSamplingPeriod;
+        public event ActivelyPushDataEventHandler<(string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo)>? OnSetSamplingPeriod;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -665,7 +665,7 @@ namespace HJ212
         #endregion
 
         #region c35
-        private async Task SetSamplingPeriodRspEvent((TimeOnly CstartTime, int Ctime, RspInfo RspInfo) rs)
+        private async Task SetSamplingPeriodRspEvent((string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo) rs)
         {
             if (OnSetSamplingPeriod is not null)
             {

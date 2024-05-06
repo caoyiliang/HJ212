@@ -30,7 +30,7 @@ gb.OnOutOfStandardRetentionSample += Gb_OnOutOfStandardRetentionSample;
 gb.OnSetSamplingPeriod += Gb_OnSetSamplingPeriod;
 
 //测试 QN=20160801085857223;ST=32;CN=3016;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018;CstartTime=000000;CTime=2&&
-async Task Gb_OnSetSamplingPeriod((TimeOnly CstartTime, int Ctime, RspInfo RspInfo) objects)
+async Task Gb_OnSetSamplingPeriod((string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo) objects)
 {
     await Task.CompletedTask;
 }

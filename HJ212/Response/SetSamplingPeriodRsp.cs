@@ -5,8 +5,9 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class SetSamplingPeriodRsp : IAsyncResponse<(TimeOnly CstartTime, int Ctime, RspInfo RspInfo)>
+    internal class SetSamplingPeriodRsp : IAsyncResponse<(string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo)>
     {
+        private string _polId = null!;
         private int _Ctime;
         private TimeOnly _CstartTime;
         private RspInfo _rspInfo = new();
@@ -18,6 +19,7 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
+            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Set SamplingPeriod Error");
             if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("CTime"))?.Split('=')[1], out _Ctime))
             {
                 throw new ArgumentException($"{GB._name} HJ212 Set SamplingPeriod CTime Error");
@@ -41,9 +43,9 @@ namespace HJ212.Response
             return (rs.Where(item => item.Contains("CN=3016")).Any(), default);
         }
 
-        public (TimeOnly CstartTime, int Ctime, RspInfo RspInfo) GetResult()
+        public (string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo) GetResult()
         {
-            return (_CstartTime, _Ctime, _rspInfo);
+            return (_polId, _CstartTime, _Ctime, _rspInfo);
         }
     }
 }

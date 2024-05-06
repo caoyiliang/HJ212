@@ -121,6 +121,6 @@ namespace HJ212
         event ActivelyAskDataEventHandler<RspInfo, (DateTime DataTime, int VaseNo)> OnOutOfStandardRetentionSample;
 
         /// <summary>C35设置采样时间周期</summary>
-        event ActivelyPushDataEventHandler<(TimeOnly CstartTime, int Ctime, RspInfo RspInfo)> OnSetSamplingPeriod;
+        event ActivelyPushDataEventHandler<(string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo)> OnSetSamplingPeriod;
     }
 }
