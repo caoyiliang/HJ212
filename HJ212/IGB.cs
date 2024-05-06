@@ -1,6 +1,7 @@
 ﻿using Communication;
 using HJ212.Model;
 using ProtocolInterface;
+using System.Reflection.Emit;
 
 namespace HJ212
 {
@@ -89,5 +90,14 @@ namespace HJ212
 
         /// <summary>C24上传数采仪开机时间</summary>
         Task UploadAcquisitionDeviceRestartTime(DateTime dataTime, DateTime restartTime, int timeout = -1);
+
+        /// <summary>C25上传噪声声级实时数据</summary>
+        Task UploadRealTimeNoiseLevel(DateTime dataTime, float noiseLevel, int timeout = -1);
+
+        /// <summary>C26上传噪声声级分钟数据</summary>
+        Task UploadMinuteNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1);
+
+        /// <summary>C27上传噪声声级小时数据</summary>
+        Task UploadHourNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1);
     }
 }
