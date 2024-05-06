@@ -104,5 +104,8 @@ namespace HJ212
 
         /// <summary>C28上传噪声声级日历史数据</summary>
         Task UploadDayNoiseLevel(DateTime dataTime, List<NoiseLevelData_Day> data, int timeout = -1);
+
+        /// <summary>C30零点校准量程校准</summary>
+        event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)> OnCalibrate;
     }
 }
