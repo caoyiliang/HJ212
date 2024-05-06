@@ -107,5 +107,8 @@ namespace HJ212
 
         /// <summary>C30零点校准量程校准</summary>
         event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)> OnCalibrate;
+
+        /// <summary>C31即时采样</summary>
+        event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)> OnRealTimeSampling;
     }
 }

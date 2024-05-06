@@ -23,6 +23,13 @@ gb.OnGetHourData += Gb_OnGetHourData;
 gb.OnGetDayData += Gb_OnGetDayData;
 gb.OnGetRunningTimeData += Gb_OnGetRunningTimeData;
 gb.OnCalibrate += Gb_OnCalibrate;
+gb.OnRealTimeSampling += Gb_OnRealTimeSampling;
+
+//测试 QN=20160801085857223;ST=32;CN=3012;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018&&
+async Task Gb_OnRealTimeSampling((string PolId, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 //测试 QN=20160801085857223;ST=32;CN=3011;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018&&
 async Task Gb_OnCalibrate((string PolId, RspInfo RspInfo) objects)
