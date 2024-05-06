@@ -1,7 +1,6 @@
 ﻿using Communication;
 using HJ212.Model;
 using ProtocolInterface;
-using System.Reflection.Emit;
 
 namespace HJ212
 {
@@ -46,7 +45,10 @@ namespace HJ212
         /// <summary>C13停止察看设备运行状态</summary>
         event ActivelyPushDataEventHandler<RspInfo> OnStopRunningStateData;
 
-        /// <summary>C14上传污染物实时数据</summary>
+        /// <summary>
+        /// C14上传污染物实时数据
+        /// (表 C.29 上传工况实时数据 同)
+        /// </summary>
         Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1);
 
         /// <summary>C14上传污染物实时数据(无返回变体)</summary>
@@ -99,5 +101,8 @@ namespace HJ212
 
         /// <summary>C27上传噪声声级小时数据</summary>
         Task UploadHourNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1);
+
+        /// <summary>C28上传噪声声级日历史数据</summary>
+        Task UploadDayNoiseLevel(DateTime dataTime, List<NoiseLevelData_Day> data, int timeout = -1);
     }
 }

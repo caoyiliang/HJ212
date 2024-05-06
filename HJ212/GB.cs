@@ -544,5 +544,12 @@ namespace HJ212
             await _pigeonPort.RequestAsync<UploadHourNoiseLevelReq, CN9014Rsp>(new UploadHourNoiseLevelReq(_mn, _pw, _st, dataTime, data), timeout);
         }
         #endregion
+
+        #region c28
+        public async Task UploadDayNoiseLevel(DateTime dataTime, List<NoiseLevelData_Day> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadDayNoiseLevelReq, CN9014Rsp>(new UploadDayNoiseLevelReq(_mn, _pw, _st, dataTime, data), timeout);
+        }
+        #endregion
     }
 }
