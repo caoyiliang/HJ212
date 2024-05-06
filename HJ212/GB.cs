@@ -47,6 +47,7 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnRealTimeSampling;
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnStartCleaningOrBlowback;
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnComparisonSampling;
+        public event ActivelyAskDataEventHandler<RspInfo, (DateTime DataTime, int VaseNo)>? OnOutOfStandardRetentionSample;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -196,7 +197,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new CN1061Req(t.Result, rs));
+                        await _pigeonPort.SendAsync(new GetRealTimeDataIntervalReq(t.Result, rs));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs));
                     }
                 });
@@ -634,6 +635,28 @@ namespace HJ212
                     else
                     {
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c34
+        private async Task OutOfStandardRetentionSampleRspEvent(RspInfo rs)
+        {
+            if (OnOutOfStandardRetentionSample is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await OnOutOfStandardRetentionSample(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB OutOfStandardRetentionSample Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new OutOfStandardRetentionSampleReq(t.Result.DataTime, t.Result.VaseNo, rs));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
                     }
                 });
             }

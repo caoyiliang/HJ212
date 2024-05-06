@@ -116,5 +116,8 @@ namespace HJ212
 
         /// <summary>C33比对采样</summary>
         event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)> OnComparisonSampling;
+
+        /// <summary>C34超标留样</summary>
+        event ActivelyAskDataEventHandler<RspInfo, (DateTime DataTime, int VaseNo)> OnOutOfStandardRetentionSample;
     }
 }

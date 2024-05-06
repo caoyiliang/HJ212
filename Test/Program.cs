@@ -26,6 +26,13 @@ gb.OnCalibrate += Gb_OnCalibrate;
 gb.OnRealTimeSampling += Gb_OnRealTimeSampling;
 gb.OnStartCleaningOrBlowback += Gb_OnStartCleaningOrBlowback;
 gb.OnComparisonSampling += Gb_OnComparisonSampling;
+gb.OnOutOfStandardRetentionSample += Gb_OnOutOfStandardRetentionSample;
+
+//测试 QN=20160801085857223;ST=32;CN=3015;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&
+async Task<(DateTime DataTime, int VaseNo)> Gb_OnOutOfStandardRetentionSample(RspInfo objects)
+{
+    return await Task.FromResult((DateTime.Now, 2));
+}
 
 //测试 QN=20160801085857223;ST=32;CN=3014;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018&&
 async Task Gb_OnComparisonSampling((string PolId, RspInfo RspInfo) objects)

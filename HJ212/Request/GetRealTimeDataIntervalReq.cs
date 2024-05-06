@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class CN1061Req(int rtdInterval, RspInfo rspInfo) : IByteStream
+    internal class GetRealTimeDataIntervalReq(int rtdInterval, RspInfo rspInfo) : IByteStream
     {
         public byte[] ToBytes()
         {
