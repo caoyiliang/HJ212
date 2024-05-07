@@ -137,5 +137,8 @@ namespace HJ212
 
         /// <summary>C40上传现场机信息（日志）</summary>
         Task UploadLog(DateTime dataTime, string? polId, string log, int timeout = -1);
+
+        /// <summary>C41提取现场机信息（日志）</summary>
+        event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>> OnGetLogInfos;
     }
 }

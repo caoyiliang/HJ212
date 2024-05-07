@@ -52,6 +52,7 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (TimeOnly CstartTime, int Ctime)>? OnGetSamplingPeriod;
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), int>? OnGetSampleExtractionTime;
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string>? OnGetSN;
+        public event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>>? OnGetLogInfos;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -764,7 +765,32 @@ namespace HJ212
         #region c40
         public async Task UploadLog(DateTime dataTime, string? polId, string log, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(_mn, _pw, _st, dataTime, polId, log), timeout);
+            await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(_mn, _pw, _st, 5, dataTime, polId, log), timeout);
+        }
+        #endregion
+
+        #region c41
+        private async Task GetLogInfosRspEvent((string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
+        {
+            if (OnGetLogInfos is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnGetLogInfos(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetLogInfos Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        foreach (var item in t.Result)
+                        {
+                            await _pigeonPort.SendAsync(new UploadLogReq(_mn, _pw, _st, 4, item.DataTime, item.PolId, item.Info));
+                        }
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
         }
         #endregion
     }
