@@ -120,10 +120,16 @@ namespace HJ212
         /// <summary>C34超标留样</summary>
         event ActivelyAskDataEventHandler<RspInfo, (DateTime DataTime, int VaseNo)> OnOutOfStandardRetentionSample;
 
-        /// <summary>C35设置采样时间周期</summary>
+        /// <summary>C35设置采样时间周期(单位：小时)</summary>
         event ActivelyPushDataEventHandler<(string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo)> OnSetSamplingPeriod;
 
-        /// <summary>C36提取采样时间周期</summary>
+        /// <summary>C36提取采样时间周期(单位：小时)</summary>
         event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (TimeOnly CstartTime, int Ctime)> OnGetSamplingPeriod;
+
+        /// <summary>C37提取出样时间(单位：分钟)</summary>
+        event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), int> OnGetSampleExtractionTime;
+
+        /// <summary>C38提取设备唯一标识</summary>
+        event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string> OnGetSN;
     }
 }
