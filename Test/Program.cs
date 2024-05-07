@@ -257,7 +257,14 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20160801085857223;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.UploadSN(DateTime.Now, "a1001", "010000A8900016F000169DC0", 120000);
+//    await gb.UploadSN(DateTime.Now, "a1001", "010000A8900016F000169DC0");
+//}
+//catch (TimeoutException) { }
+
+//try
+//{
+//    //测试 QN=20160801085857223;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.UploadLog(DateTime.Now, "a1001", "你好日志", 120000);
 //}
 //catch (TimeoutException) { }
 

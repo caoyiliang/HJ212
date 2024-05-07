@@ -760,5 +760,12 @@ namespace HJ212
             await _pigeonPort.RequestAsync<UploadSNReq, CN9014Rsp>(new UploadSNReq(_mn, _pw, _st, dataTime, polId, sn), timeout);
         }
         #endregion
+
+        #region c40
+        public async Task UploadLog(DateTime dataTime, string? polId, string log, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(_mn, _pw, _st, dataTime, polId, log), timeout);
+        }
+        #endregion
     }
 }

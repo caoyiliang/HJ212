@@ -134,5 +134,8 @@ namespace HJ212
 
         /// <summary>C39上传设备唯一标识</summary>
         Task UploadSN(DateTime dataTime, string polId, string sn, int timeout = -1);
+
+        /// <summary>C40上传现场机信息（日志）</summary>
+        Task UploadLog(DateTime dataTime, string? polId, string log, int timeout = -1);
     }
 }
