@@ -131,5 +131,8 @@ namespace HJ212
 
         /// <summary>C38提取设备唯一标识</summary>
         event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string> OnGetSN;
+
+        /// <summary>C39上传设备唯一标识</summary>
+        Task UploadSN(DateTime dataTime, string polId, string sn, int timeout = -1);
     }
 }

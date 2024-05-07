@@ -753,5 +753,12 @@ namespace HJ212
             }
         }
         #endregion
+
+        #region c39
+        public async Task UploadSN(DateTime dataTime, string polId, string sn, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadSNReq, CN9014Rsp>(new UploadSNReq(_mn, _pw, _st, dataTime, polId, sn), timeout);
+        }
+        #endregion
     }
 }
