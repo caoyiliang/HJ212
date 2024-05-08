@@ -5,9 +5,10 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class GetStateRsp : IAsyncResponse<(string PolId, RspInfo RspInfo)>
+    internal class GetInfoRsp : IAsyncResponse<(string PolId, string InfoId, RspInfo RspInfo)>
     {
         private string _polId = null!;
+        private string _infoId = null!;
         private RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
         {
@@ -17,7 +18,8 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Get State Error");
+            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Get Info Error");
+            _infoId = datalist.SingleOrDefault(item => item.Contains("InfoId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Get Info Error");
             await Task.CompletedTask;
         }
 
@@ -30,12 +32,12 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=3020")).Any() && rs.Where(item => item.Contains("InfoId=i12001")).Any(), default);
+            return (rs.Where(item => item.Contains("CN=3020")).Any() && rs.Where(item => !item.Contains("InfoId=i11001")).Any(), default);
         }
 
-        public (string PolId, RspInfo RspInfo) GetResult()
+        public (string PolId, string InfoId, RspInfo RspInfo) GetResult()
         {
-            return (_polId, _rspInfo);
+            return (_polId, _infoId, _rspInfo);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace HJ212
 
         /// <summary>
         /// C14上传污染物实时数据
-        /// (表 C.29 上传工况实时数据 同)
+        /// (C29上传工况实时数据 同)
         /// </summary>
         Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1);
 
@@ -141,10 +141,16 @@ namespace HJ212
         /// <summary>C41提取现场机信息（日志）</summary>
         event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>> OnGetLogInfos;
 
-        /// <summary>C42上传现场机信息（状态）</summary>
-        Task UploadState(DateTime dataTime, string polId, int maintenance, int warn, int timeout = -1);
+        /// <summary>
+        /// C42上传现场机信息（状态）
+        /// (C44上传现场机信息（参数） 同)
+        /// </summary>
+        Task UploadInfo(DateTime dataTime, string polId, List<DeviceInfo> deviceInfos, int timeout = -1);
 
-        /// <summary>C43提取现场机信息（状态）</summary>
-        event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (DateTime DataTime, int Maintenance, int Warn)> OnGetState;
+        /// <summary>
+        /// C43提取现场机信息（状态）
+        /// (C45提取现场机信息（参数） 同)
+        /// </summary>
+        event ActivelyAskDataEventHandler<(string PolId, string InfoId, RspInfo RspInfo), (DateTime DataTime, List<DeviceInfo> DeviceInfos)> OnGetInfo;
     }
 }

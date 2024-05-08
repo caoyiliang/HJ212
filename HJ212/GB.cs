@@ -53,7 +53,7 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), int>? OnGetSampleExtractionTime;
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string>? OnGetSN;
         public event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>>? OnGetLogInfos;
-        public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (DateTime DataTime, int Maintenance, int Warn)>? OnGetState;
+        public event ActivelyAskDataEventHandler<(string PolId, string InfoId, RspInfo RspInfo), (DateTime DataTime, List<DeviceInfo> DeviceInfos)>? OnGetInfo;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -378,7 +378,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c14
+        #region c14、29
         public async Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadRealTimeDataReq, CN9014Rsp>(new UploadRealTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
@@ -795,28 +795,28 @@ namespace HJ212
         }
         #endregion
 
-        #region c42
-        public async Task UploadState(DateTime dataTime, string polId, int maintenance, int warn, int timeout = -1)
+        #region c42、44
+        public async Task UploadInfo(DateTime dataTime, string polId, List<DeviceInfo> deviceInfos, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadStateReq, CN9014Rsp>(new UploadStateReq(_mn, _pw, _st, 5, dataTime, polId, maintenance, warn), timeout);
+            await _pigeonPort.RequestAsync<UploadInfoReq, CN9014Rsp>(new UploadInfoReq(_mn, _pw, _st, 5, dataTime, polId, deviceInfos), timeout);
         }
         #endregion
 
-        #region c43
-        private async Task GetStateRspEvent((string PolId, RspInfo RspInfo) rs)
+        #region c43、45
+        private async Task GetInfoRspEvent((string PolId, string InfoId, RspInfo RspInfo) rs)
         {
-            if (OnGetState is not null)
+            if (OnGetInfo is not null)
             {
                 await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
-                await OnGetState(rs).ContinueWith(async t =>
+                await OnGetInfo(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
                     {
-                        _logger.Error($"{_name} GB GetState Error\n{t.Exception}");
+                        _logger.Error($"{_name} GB GetInfo Error\n{t.Exception}");
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new UploadStateReq(_mn, _pw, _st, 4, t.Result.DataTime, rs.PolId, t.Result.Maintenance, t.Result.Warn));
+                        await _pigeonPort.SendAsync(new UploadInfoReq(_mn, _pw, _st, 4, t.Result.DataTime, rs.PolId, t.Result.DeviceInfos));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
