@@ -152,5 +152,8 @@ namespace HJ212
         /// (C45提取现场机信息（参数） 同)
         /// </summary>
         event ActivelyAskDataEventHandler<(string PolId, string InfoId, RspInfo RspInfo), (DateTime DataTime, List<DeviceInfo> DeviceInfos)> OnGetInfo;
+
+        /// <summary>C46设置现场机参数</summary>
+        event ActivelyPushDataEventHandler<(string PolId, string InfoId, string Info, RspInfo RspInfo)> OnSetInfo;
     }
 }

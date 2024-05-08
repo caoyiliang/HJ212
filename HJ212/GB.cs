@@ -54,6 +54,7 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string>? OnGetSN;
         public event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>>? OnGetLogInfos;
         public event ActivelyAskDataEventHandler<(string PolId, string InfoId, RspInfo RspInfo), (DateTime DataTime, List<DeviceInfo> DeviceInfos)>? OnGetInfo;
+        public event ActivelyPushDataEventHandler<(string PolId, string InfoId, string Info, RspInfo RspInfo)>? OnSetInfo;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -817,6 +818,27 @@ namespace HJ212
                     else
                     {
                         await _pigeonPort.SendAsync(new UploadInfoReq(_mn, _pw, _st, 4, t.Result.DataTime, rs.PolId, t.Result.DeviceInfos));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c46
+        private async Task SetInfoRspEvent((string PolId, string InfoId, string Info, RspInfo RspInfo) rs)
+        {
+            if (OnSetInfo is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnSetInfo(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB SetInfo Error\n{t.Exception}");
+                    }
+                    else
+                    {
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });

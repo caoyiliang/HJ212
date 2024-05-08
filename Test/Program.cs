@@ -33,6 +33,13 @@ gb.OnGetSampleExtractionTime += Gb_OnGetSampleExtractionTime;
 gb.OnGetSN += Gb_OnGetSN;
 gb.OnGetLogInfos += Gb_OnGetLogInfos;
 gb.OnGetInfo += Gb_OnGetInfo;
+gb.OnSetInfo += Gb_OnSetInfo;
+
+//测试 QN=20160801085857223;ST=32;CN=3021;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018;InfoId=i13004;i13004-Info=168.0&&
+async Task Gb_OnSetInfo((string PolId, string InfoId, string Info, RspInfo RspInfo) objects)
+{
+    await Task.CompletedTask;
+}
 
 //测试 QN=20160801085857223;ST=32;CN=3020;PW=123456;MN=010000A8900016F000169DC0; Flag=5;CP=&&PolId=w01018;InfoId=i12001&&
 async Task<(DateTime DataTime, List<DeviceInfo> DeviceInfos)> Gb_OnGetInfo((string PolId, string InfoId, RspInfo RspInfo) objects)
@@ -283,12 +290,12 @@ await gb.OpenAsync();
 //}
 //catch (TimeoutException) { }
 
-try
-{
-    //测试 QN=20160801085857223;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.UploadInfo(DateTime.Now, "a1001", new List<DeviceInfo> { new("i12001", "1"), new("i12002", "1") }, 120000);
-}
-catch (TimeoutException) { }
+//try
+//{
+//    //测试 QN=20160801085857223;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.UploadInfo(DateTime.Now, "a1001", new List<DeviceInfo> { new("i12001", "1"), new("i12002", "1") }, 120000);
+//}
+//catch (TimeoutException) { }
 
 Console.WriteLine("OK");
 Console.ReadLine();
