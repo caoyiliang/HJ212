@@ -53,6 +53,7 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), int>? OnGetSampleExtractionTime;
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string>? OnGetSN;
         public event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>>? OnGetLogInfos;
+        public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (DateTime DataTime, int Maintenance, int Warn)>? OnGetState;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -787,6 +788,35 @@ namespace HJ212
                         {
                             await _pigeonPort.SendAsync(new UploadLogReq(_mn, _pw, _st, 4, item.DataTime, item.PolId, item.Info));
                         }
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c42
+        public async Task UploadState(DateTime dataTime, string polId, int maintenance, int warn, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadStateReq, CN9014Rsp>(new UploadStateReq(_mn, _pw, _st, 5, dataTime, polId, maintenance, warn), timeout);
+        }
+        #endregion
+
+        #region c43
+        private async Task GetStateRspEvent((string PolId, RspInfo RspInfo) rs)
+        {
+            if (OnGetState is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await OnGetState(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetState Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new UploadStateReq(_mn, _pw, _st, 4, t.Result.DataTime, rs.PolId, t.Result.Maintenance, t.Result.Warn));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });

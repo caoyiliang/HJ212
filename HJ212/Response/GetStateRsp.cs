@@ -5,11 +5,9 @@ using Utils;
 
 namespace HJ212.Response
 {
-    internal class GetLogInfosRsp : IAsyncResponse<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo)>
+    internal class GetStateRsp : IAsyncResponse<(string PolId, RspInfo RspInfo)>
     {
-        private string? _polId;
-        private DateTime _beginTime;
-        private DateTime _endTime;
+        private string _polId = null!;
         private RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
         {
@@ -19,15 +17,7 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1];
-            if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("BeginTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _beginTime))
-            {
-                throw new ArgumentException($"{GB._name} HJ212 Get LogInfos BeginTime Error");
-            }
-            if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("EndTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _endTime))
-            {
-                throw new ArgumentException($"{GB._name} HJ212 Get LogInfos EndTime Error");
-            }
+            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Get State Error");
             await Task.CompletedTask;
         }
 
@@ -40,12 +30,12 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=3020")).Any() && rs.Where(item => item.Contains("InfoId=i11001")).Any(), default);
+            return (rs.Where(item => item.Contains("CN=3020")).Any() && rs.Where(item => item.Contains("InfoId=i12001")).Any(), default);
         }
 
-        public (string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) GetResult()
+        public (string PolId, RspInfo RspInfo) GetResult()
         {
-            return (_polId, _beginTime, _endTime, _rspInfo);
+            return (_polId, _rspInfo);
         }
     }
 }

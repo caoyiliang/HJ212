@@ -32,6 +32,13 @@ gb.OnGetSamplingPeriod += Gb_OnGetSamplingPeriod;
 gb.OnGetSampleExtractionTime += Gb_OnGetSampleExtractionTime;
 gb.OnGetSN += Gb_OnGetSN;
 gb.OnGetLogInfos += Gb_OnGetLogInfos;
+gb.OnGetState += Gb_OnGetState;
+
+//测试 QN=20160801085857223;ST=32;CN=3020;PW=123456;MN=010000A8900016F000169DC0; Flag=5;CP=&&PolId=w01018;InfoId=i12001&&
+async Task<(DateTime DataTime, int Maintenance, int Warn)> Gb_OnGetState((string PolId, RspInfo RspInfo) objects)
+{
+    return await Task.FromResult((DateTime.Now, 1, 1));
+}
 
 //测试 QN=20160801085857223;ST=32;CN=3020;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&PolId=w01018;InfoId=i11001;BeginTime=20160801010522,EndTime=20160801085857&&
 async Task<List<LogInfo>> Gb_OnGetLogInfos((string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
@@ -272,7 +279,14 @@ await gb.OpenAsync();
 //try
 //{
 //    //测试 QN=20160801085857223;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-//    await gb.UploadLog(DateTime.Now, "a1001", "你好日志", 120000);
+//    await gb.UploadLog(DateTime.Now, "a1001", "你好日志");
+//}
+//catch (TimeoutException) { }
+
+//try
+//{
+//    //测试 QN=20160801085857223;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.UploadState(DateTime.Now, "a1001", 1, 1, 120000);
 //}
 //catch (TimeoutException) { }
 

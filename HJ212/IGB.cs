@@ -140,5 +140,11 @@ namespace HJ212
 
         /// <summary>C41提取现场机信息（日志）</summary>
         event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>> OnGetLogInfos;
+
+        /// <summary>C42上传现场机信息（状态）</summary>
+        Task UploadState(DateTime dataTime, string polId, int maintenance, int warn, int timeout = -1);
+
+        /// <summary>C43提取现场机信息（状态）</summary>
+        event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (DateTime DataTime, int Maintenance, int Warn)> OnGetState;
     }
 }
