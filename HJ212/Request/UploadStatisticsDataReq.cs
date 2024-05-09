@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class UploadStatisticsDataReq(CN cn, string mn, string pw, ST st, DateTime dataTime, List<StatisticsData> data) : IAsyncRequest
+    internal class UploadStatisticsDataReq(CN cn, string mn, string pw, ST st, DateTime dataTime, List<StatisticsData> data, int pnum, int pno) : IAsyncRequest
     {
         private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
@@ -15,7 +15,7 @@ namespace HJ212.Request
 
         public byte[] ToBytes()
         {
-            var rs = $"QN={_QN};ST={(int)st};CN={(int)cn};PW={pw};MN={mn};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{(c.Cou != null ? $"{c.Name}-Cou={c.Cou}," : "")}{c.Name}-Min={c.Min},{c.Name}-Avg={c.Avg},{c.Name}-Max={c.Max}{(c.Flag != null ? $",{c.Name}-Flag={c.Flag}" : "")}"))}&&";
+            var rs = $"QN={_QN};ST={(int)st};CN={(int)cn};PW={pw};MN={mn};Flag={(pnum > 1 ? $"7;PNUM={pnum};PNO={pno}" : "5")};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{(c.Cou != null ? $"{c.Name}-Cou={c.Cou}," : "")}{c.Name}-Min={c.Min},{c.Name}-Avg={c.Avg},{c.Name}-Max={c.Max}{(c.Flag != null ? $",{c.Name}-Flag={c.Flag}" : "")}"))}&&";
             rs = GB.GetGbCmd(rs);
             return Encoding.ASCII.GetBytes(rs);
         }

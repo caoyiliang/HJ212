@@ -58,34 +58,43 @@ namespace HJ212
         Task UploadRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1);
 
         /// <summary>C16上传污染物分钟数据</summary>
-        Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
+        Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1);
 
         /// <summary>C16上传污染物分钟数据(无返回变体)</summary>
-        Task SendMinuteData(DateTime dataTime, List<StatisticsData> data);
+        Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
 
         /// <summary>C17上传污染物小时数据</summary>
-        Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
+        Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1);
 
         /// <summary>C17上传污染物小时数据(无返回变体)</summary>
-        Task SendHourData(DateTime dataTime, List<StatisticsData> data);
+        Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
 
         /// <summary>C18上传污染物日历史数据</summary>
-        Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1);
+        Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1);
 
         /// <summary>C18上传污染物日历史数据(无返回变体)</summary>
-        Task SendDayData(DateTime dataTime, List<StatisticsData> data);
+        Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
 
         /// <summary>C19上传设备运行时间日历史数据</summary>
         Task UploadRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1);
 
-        /// <summary>C20取污染物分钟历史数据</summary>
-        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetMinuteData;
+        /// <summary>
+        /// C20取污染物分钟历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)> OnGetMinuteData;
 
-        /// <summary>C21取污染物小时历史数据</summary>
-        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetHourData;
+        /// <summary>
+        /// C21取污染物小时历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)> OnGetHourData;
 
-        /// <summary>C22取污染物日历史数据</summary>
-        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)> OnGetDayData;
+        /// <summary>
+        /// C22取污染物日历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)> OnGetDayData;
 
         /// <summary>C23取设备运行时间日历史数据</summary>
         event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<RunningTimeData> Data)> OnGetRunningTimeData;

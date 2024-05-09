@@ -114,21 +114,30 @@ async Task<(DateTime DataTime, List<RunningTimeData> Data)> Gb_OnGetRunningTimeD
 }
 
 //测试 QN=20160801085857223;ST=32;CN=2031;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801000000;EndTime=20160801000000&&
-async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetDayData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
+async Task<(List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)> Gb_OnGetDayData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
 {
-    return await Task.FromResult((DateTime.Now, new List<StatisticsData> { new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" } }));
+    return await Task.FromResult((new List<HistoryData> {
+        new(DateTime.Now, [new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" }]),
+        new(DateTime.Now.AddHours(-1), [new("a1002") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" }])
+    }, false, -1));
 }
 
 //测试 QN=20160801085857223;ST=32;CN=2061;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801080000;EndTime=20160801080000&&
-async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetHourData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
+async Task<(List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)> Gb_OnGetHourData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
 {
-    return await Task.FromResult((DateTime.Now, new List<StatisticsData> { new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" } }));
+    return await Task.FromResult((new List<HistoryData> {
+        new(DateTime.Now, [new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" }]),
+        new(DateTime.Now.AddHours(-1), [new("a1002") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" }])
+    }, false, -1));
 }
 
 //测试 QN=20160801085857223;ST=32;CN=2051;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&BeginTime=20160801084000;EndTime=20160801084000&&
-async Task<(DateTime DataTime, List<StatisticsData> Data)> Gb_OnGetMinuteData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
+async Task<(List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)> Gb_OnGetMinuteData((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) objects)
 {
-    return await Task.FromResult((DateTime.Now, new List<StatisticsData> { new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" } }));
+    return await Task.FromResult((new List<HistoryData> {
+        new(DateTime.Now, [new("a1001") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" }]),
+        new(DateTime.Now.AddHours(-1), [new("a1002") { Min = "30.7", Avg = "50.4", Max = "60.5", Flag = "N" }])
+    }, false, -1));
 }
 
 //测试 QN=20160801085857223;ST=32;CN=2022;PW=123456;MN=010000A8900016F000169DC0;Flag=5;CP=&&&&

@@ -39,9 +39,9 @@ namespace HJ212
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRealTimeData;
         public event ActivelyPushDataEventHandler<RspInfo>? OnStartRunningStateData;
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRunningStateData;
-        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)>? OnGetMinuteData;
-        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)>? OnGetHourData;
-        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<StatisticsData> Data)>? OnGetDayData;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetMinuteData;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetHourData;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetDayData;
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<RunningTimeData> Data)>? OnGetRunningTimeData;
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnCalibrate;
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnRealTimeSampling;
@@ -399,38 +399,38 @@ namespace HJ212
         #endregion
 
         #region c16
-        public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.分钟数据, _mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.分钟数据, _mn, _pw, _st, dataTime, data, pnum, pno), timeout);
         }
 
-        public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data)
+        public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, _mn, _pw, _qn, _st, dataTime, data));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, _mn, _pw, _qn, _st, dataTime, data, pnum, pno));
         }
         #endregion
 
         #region c17
-        public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.小时数据, _mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.小时数据, _mn, _pw, _st, dataTime, data, pnum, pno), timeout);
         }
 
-        public async Task SendHourData(DateTime dataTime, List<StatisticsData> data)
+        public async Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.小时数据, _mn, _pw, _qn, _st, dataTime, data));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.小时数据, _mn, _pw, _qn, _st, dataTime, data, pnum, pno));
         }
         #endregion
 
         #region c18
-        public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1)
+        public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.日历史数据, _mn, _pw, _st, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.日历史数据, _mn, _pw, _st, dataTime, data, pnum, pno), timeout);
         }
 
-        public async Task SendDayData(DateTime dataTime, List<StatisticsData> data)
+        public async Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, _mn, _pw, _qn, _st, dataTime, data));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, _mn, _pw, _qn, _st, dataTime, data, pnum, pno));
         }
         #endregion
 
@@ -441,7 +441,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c20
+        #region c20、47、48、49、50
         private async Task GetMinuteDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetMinuteData is not null)
@@ -455,7 +455,18 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, _mn, _pw, _qn, _st, t.Result.DataTime, t.Result.Data));
+                        var count = t.Result.HistoryDatas.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (t.Result.ReturnValue)
+                            {
+                                await UploadMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, t.Result.Timeout ?? -1, count, i + 1);
+                            }
+                            else
+                            {
+                                await SendMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
+                            }
+                        }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
@@ -463,7 +474,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c21
+        #region c21、47、48、49、50
         private async Task GetHourDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetHourData is not null)
@@ -477,7 +488,18 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.小时数据, _mn, _pw, _qn, _st, t.Result.DataTime, t.Result.Data));
+                        var count = t.Result.HistoryDatas.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (t.Result.ReturnValue)
+                            {
+                                await UploadHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, t.Result.Timeout ?? -1, count, i + 1);
+                            }
+                            else
+                            {
+                                await SendHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
+                            }
+                        }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
@@ -485,7 +507,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c22
+        #region c22、47、48、49、50
         private async Task GetDayDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetDayData is not null)
@@ -499,7 +521,18 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, _mn, _pw, _qn, _st, t.Result.DataTime, t.Result.Data));
+                        var count = t.Result.HistoryDatas.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (t.Result.ReturnValue)
+                            {
+                                await UploadDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, t.Result.Timeout ?? -1, count, i + 1);
+                            }
+                            else
+                            {
+                                await SendDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
+                            }
+                        }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
