@@ -13,6 +13,7 @@ using Utils;
 
 namespace HJ212
 {
+    /// <inheritdoc/>
     public class GB : IGB
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<GB>();
@@ -23,43 +24,72 @@ namespace HJ212
         private IPigeonPort _pigeonPort;
 
         private bool _isConnect = false;
+        /// <inheritdoc/>
         public bool IsConnect => _isConnect;
 
         internal static string _name = "HJ212";
-
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string? PolId, RspInfo RspInfo), DateTime?>? OnGetSystemTime;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)>? OnSetSystemTime;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetRealTimeDataInterval;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(int RtdInterval, RspInfo RspInfo)>? OnSetRealTimeDataInterval;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetMinuteDataInterval;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(int MinInterval, RspInfo RspInfo)>? OnSetMinuteDataInterval;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string NewPW, RspInfo RspInfo)>? OnSetNewPW;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<RspInfo>? OnStartRealTimeData;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRealTimeData;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<RspInfo>? OnStartRunningStateData;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<RspInfo>? OnStopRunningStateData;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetMinuteData;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetHourData;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetDayData;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<RunningTimeData> Data)>? OnGetRunningTimeData;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnCalibrate;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnRealTimeSampling;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnStartCleaningOrBlowback;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnComparisonSampling;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<RspInfo, (DateTime DataTime, int VaseNo)>? OnOutOfStandardRetentionSample;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo)>? OnSetSamplingPeriod;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (TimeOnly CstartTime, int Ctime)>? OnGetSamplingPeriod;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), int>? OnGetSampleExtractionTime;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string>? OnGetSN;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<LogInfo>>? OnGetLogInfos;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string PolId, string InfoId, RspInfo RspInfo), (DateTime DataTime, List<DeviceInfo> DeviceInfos)>? OnGetInfo;
+        /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, string InfoId, string Info, RspInfo RspInfo)>? OnSetInfo;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _pigeonPort.OnConnect += value; remove => _pigeonPort.OnConnect -= value; }
+        /// <inheritdoc/>
         public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源)
         {
             _name = name;
@@ -109,8 +139,10 @@ namespace HJ212
             await Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task CloseAsync() => _pigeonPort.StopAsync();
 
+        /// <inheritdoc/>
         public Task OpenAsync() => _pigeonPort.StartAsync();
 
         internal static string GetGbCmd(string rs)
