@@ -4,6 +4,7 @@ using ProtocolInterface;
 
 namespace HJ212
 {
+    /// <summary>国标接口</summary>
     public interface IGB : IProtocol
     {
         /// <summary>C1设置超时时间及重发次数</summary>

@@ -21,13 +21,16 @@ namespace HJ212
         private readonly string _pw;
         private readonly bool _qn;
         private readonly ST _st;
-        private IPigeonPort _pigeonPort;
+#pragma warning disable CA1859 // 尽可能使用具体类型以提高性能
+        private readonly IPigeonPort _pigeonPort;
+#pragma warning restore CA1859 // 尽可能使用具体类型以提高性能
 
         private bool _isConnect = false;
         /// <inheritdoc/>
         public bool IsConnect => _isConnect;
 
         internal static string _name = "HJ212";
+        internal static Version _version;
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
         /// <inheritdoc/>
@@ -90,13 +93,14 @@ namespace HJ212
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _pigeonPort.OnConnect += value; remove => _pigeonPort.OnConnect -= value; }
         /// <inheritdoc/>
-        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源)
+        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017)
         {
             _name = name;
             _mn = mn;
             _pw = pw;
             _qn = qn;
             _st = st;
+            _version = version;
             _pigeonPort = new PigeonPort(this, new TopPort(physicalPort, new HeadLengthParser([0x23, 0x23], d =>
             {
                 if (d.Length < 15) return Task.FromResult(new GetDataLengthRsp() { StateCode = Parser.StateCode.LengthNotEnough });
@@ -151,6 +155,7 @@ namespace HJ212
             return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}\r\n";
         }
 
+#pragma warning disable IDE0051 // 删除未使用的私有成员
         #region c1
         private async Task SetOverTimeAndReCountRspEvent((int OverTime, int ReCount, RspInfo RspInfo) rs)
         {
@@ -216,6 +221,7 @@ namespace HJ212
         #endregion
 
         #region c4
+        /// <inheritdoc/>
         public async Task AskSetSystemTime(string polId, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(_mn, _pw, _st, polId), timeout);
@@ -412,11 +418,13 @@ namespace HJ212
         #endregion
 
         #region c14、29
+        /// <inheritdoc/>
         public async Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadRealTimeDataReq, CN9014Rsp>(new UploadRealTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
         }
 
+        /// <inheritdoc/>
         public async Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data)
         {
             await _pigeonPort.SendAsync(new SendRealTimeDataReq(_mn, _pw, _qn, _st, dataTime, data));
@@ -424,6 +432,7 @@ namespace HJ212
         #endregion
 
         #region c15
+        /// <inheritdoc/>
         public async Task UploadRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadRunningStateDataReq, CN9014Rsp>(new UploadRunningStateDataReq(_mn, _pw, _st, dataTime, data), timeout);
@@ -431,11 +440,13 @@ namespace HJ212
         #endregion
 
         #region c16
+        /// <inheritdoc/>
         public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
             await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.分钟数据, _mn, _pw, _st, dataTime, data, pnum, pno), timeout);
         }
 
+        /// <inheritdoc/>
         public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
             await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, _mn, _pw, _qn, _st, dataTime, data, pnum, pno));
@@ -443,11 +454,13 @@ namespace HJ212
         #endregion
 
         #region c17
+        /// <inheritdoc/>
         public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
             await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.小时数据, _mn, _pw, _st, dataTime, data, pnum, pno), timeout);
         }
 
+        /// <inheritdoc/>
         public async Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
             await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.小时数据, _mn, _pw, _qn, _st, dataTime, data, pnum, pno));
@@ -455,11 +468,13 @@ namespace HJ212
         #endregion
 
         #region c18
+        /// <inheritdoc/>
         public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
             await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.日历史数据, _mn, _pw, _st, dataTime, data, pnum, pno), timeout);
         }
 
+        /// <inheritdoc/>
         public async Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
             await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, _mn, _pw, _qn, _st, dataTime, data, pnum, pno));
@@ -467,6 +482,7 @@ namespace HJ212
         #endregion
 
         #region c19
+        /// <inheritdoc/>
         public async Task UploadRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadRunningTimeDataReq, CN9014Rsp>(new UploadRunningTimeDataReq(_mn, _pw, _st, dataTime, data), timeout);
@@ -586,7 +602,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(_mn, _pw, _st, t.Result.DataTime, t.Result.Data));
+                        await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(_mn, _pw, _st, t.Result.DataTime, t.Result.Data, false));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
@@ -595,6 +611,7 @@ namespace HJ212
         #endregion
 
         #region c24
+        /// <inheritdoc/>
         public async Task UploadAcquisitionDeviceRestartTime(DateTime dataTime, DateTime restartTime, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadAcquisitionDeviceRestartTimeReq, CN9014Rsp>(new UploadAcquisitionDeviceRestartTimeReq(_mn, _pw, _st, dataTime, restartTime), timeout);
@@ -602,6 +619,7 @@ namespace HJ212
         #endregion
 
         #region c25
+        /// <inheritdoc/>
         public async Task UploadRealTimeNoiseLevel(DateTime dataTime, float noiseLevel, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadRealTimeNoiseLevelReq, CN9014Rsp>(new UploadRealTimeNoiseLevelReq(_mn, _pw, _st, dataTime, noiseLevel), timeout);
@@ -609,6 +627,7 @@ namespace HJ212
         #endregion
 
         #region c26
+        /// <inheritdoc/>
         public async Task UploadMinuteNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadMinuteNoiseLevelReq, CN9014Rsp>(new UploadMinuteNoiseLevelReq(_mn, _pw, _st, dataTime, data), timeout);
@@ -616,6 +635,7 @@ namespace HJ212
         #endregion
 
         #region c27
+        /// <inheritdoc/>
         public async Task UploadHourNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadHourNoiseLevelReq, CN9014Rsp>(new UploadHourNoiseLevelReq(_mn, _pw, _st, dataTime, data), timeout);
@@ -623,6 +643,7 @@ namespace HJ212
         #endregion
 
         #region c28
+        /// <inheritdoc/>
         public async Task UploadDayNoiseLevel(DateTime dataTime, List<NoiseLevelData_Day> data, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadDayNoiseLevelReq, CN9014Rsp>(new UploadDayNoiseLevelReq(_mn, _pw, _st, dataTime, data), timeout);
@@ -823,6 +844,7 @@ namespace HJ212
         #endregion
 
         #region c39
+        /// <inheritdoc/>
         public async Task UploadSN(DateTime dataTime, string polId, string sn, int timeout = -1)
         {
             await _pigeonPort.RequestAsync<UploadSNReq, CN9014Rsp>(new UploadSNReq(_mn, _pw, _st, dataTime, polId, sn), timeout);
@@ -830,9 +852,10 @@ namespace HJ212
         #endregion
 
         #region c40
+        /// <inheritdoc/>
         public async Task UploadLog(DateTime dataTime, string? polId, string log, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(_mn, _pw, _st, 5, dataTime, polId, log), timeout);
+            await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(_mn, _pw, _st, dataTime, polId, log), timeout);
         }
         #endregion
 
@@ -852,7 +875,7 @@ namespace HJ212
                     {
                         foreach (var item in t.Result)
                         {
-                            await _pigeonPort.SendAsync(new UploadLogReq(_mn, _pw, _st, 4, item.DataTime, item.PolId, item.Info));
+                            await _pigeonPort.SendAsync(new UploadLogReq(_mn, _pw, _st, item.DataTime, item.PolId, item.Info, false));
                         }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
@@ -862,9 +885,10 @@ namespace HJ212
         #endregion
 
         #region c42、44
+        /// <inheritdoc/>
         public async Task UploadInfo(DateTime dataTime, string polId, List<DeviceInfo> deviceInfos, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadInfoReq, CN9014Rsp>(new UploadInfoReq(_mn, _pw, _st, 5, dataTime, polId, deviceInfos), timeout);
+            await _pigeonPort.RequestAsync<UploadInfoReq, CN9014Rsp>(new UploadInfoReq(_mn, _pw, _st, dataTime, polId, deviceInfos), timeout);
         }
         #endregion
 
@@ -882,7 +906,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new UploadInfoReq(_mn, _pw, _st, 4, t.Result.DataTime, rs.PolId, t.Result.DeviceInfos));
+                        await _pigeonPort.SendAsync(new UploadInfoReq(_mn, _pw, _st, t.Result.DataTime, rs.PolId, t.Result.DeviceInfos, false));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
@@ -910,5 +934,6 @@ namespace HJ212
             }
         }
         #endregion
+#pragma warning restore IDE0051 // 删除未使用的私有成员
     }
 }

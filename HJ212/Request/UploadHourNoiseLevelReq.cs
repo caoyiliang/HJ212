@@ -15,7 +15,7 @@ namespace HJ212.Request
 
         public byte[] ToBytes()
         {
-            var rs = $"QN={_QN};ST={(int)st};CN=2061;PW={pw};MN={mn};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{c.Name}-Data={c.Data}"))}&&";
+            var rs = $"QN={_QN};ST={(int)st};CN=2061;PW={pw};MN={mn};Flag={1 | (int)GB._version};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{c.Name}-Data={c.Data}"))}&&";
             rs = GB.GetGbCmd(rs);
             return Encoding.ASCII.GetBytes(rs);
         }

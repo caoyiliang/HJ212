@@ -12,7 +12,7 @@ namespace HJ212.Request
 
         public byte[] ToBytes()
         {
-            var rs = $"QN={DateTime.Now:yyyyMMddHHmmssfff};ST={(int)st};CN=1013;PW={pw};MN={mn};Flag=5;CP=&&PolId={polId}&&";
+            var rs = $"QN={DateTime.Now:yyyyMMddHHmmssfff};ST={(int)st};CN=1013;PW={pw};MN={mn};Flag={1 | (int)GB._version};CP=&&PolId={polId}&&";
             rs = GB.GetGbCmd(rs);
             return Encoding.ASCII.GetBytes(rs);
         }

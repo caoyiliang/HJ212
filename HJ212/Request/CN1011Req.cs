@@ -8,7 +8,7 @@ namespace HJ212.Request
     {
         public byte[] ToBytes()
         {
-            var cmd = $"{rspInfo.QN};{rspInfo.ST};CN=1011;{rspInfo.PW};{rspInfo.MN};Flag=4;CP=&&{(polId is null ? "" : $"PolId={polId};")}SystemTime={time ?? DateTime.Now:yyyyMMddHHmmss}&&";
+            var cmd = $"{rspInfo.QN};{rspInfo.ST};CN=1011;{rspInfo.PW};{rspInfo.MN};Flag={0 | (int)GB._version};CP=&&{(polId is null ? "" : $"PolId={polId};")}SystemTime={time ?? DateTime.Now:yyyyMMddHHmmss}&&";
             cmd = GB.GetGbCmd(cmd);
             return Encoding.ASCII.GetBytes(cmd);
         }

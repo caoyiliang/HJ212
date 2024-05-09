@@ -1,5 +1,9 @@
 ﻿namespace HJ212
 {
+#pragma warning disable CS1591 // 缺少对公共可见类型或成员的 XML 注释
+    /// <summary>
+    /// 系统编码
+    /// </summary>
     public enum ST
     {
         地表水质量监测 = 21,
@@ -24,6 +28,9 @@
         系统交互 = 91
     }
 
+    /// <summary>
+    /// 命令编码
+    /// </summary>
     public enum CN
     {
         实时数据 = 2011,
@@ -31,4 +38,11 @@
         小时数据 = 2061,
         日历史数据 = 2031
     }
+
+    public enum Version
+    {
+        HJT212_2005 = 0,
+        HJT212_2017 = 4
+    }
+#pragma warning restore CS1591 // 缺少对公共可见类型或成员的 XML 注释
 }
