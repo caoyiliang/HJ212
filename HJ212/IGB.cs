@@ -8,6 +8,17 @@ namespace HJ212
     /// <summary>国标接口</summary>
     public interface IGB : IProtocol
     {
+        ///<summary>设备唯一标识</summary>
+        string MN { get; set; }
+        ///<summary>访问密码</summary>
+        string PW { get; set; }
+        /// <summary>是否有请求编码</summary>
+        bool QN { get; set; }
+        /// <summary>系统编码</summary>
+        ST ST { get; set; }
+        /// <summary>国标版本</summary>
+        Version Version { get; set; }
+
         /// <summary>请求数据</summary>
         event RequestedLogEventHandler OnSentData;
 
