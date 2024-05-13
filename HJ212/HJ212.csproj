@@ -5,15 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>CSoft.HJ212</PackageId>
-    <Version>1.0.2</Version>
+    <PackageId>CSoft.Protocol.HJ212</PackageId>
+    <Version>1.0.0</Version>
     <Authors>CSoft</Authors>
     <PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/caoyiliang/HJ212</RepositoryUrl>
     <Description>HJ212</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReleaseNotes>兼容2005</PackageReleaseNotes>
+    <PackageReleaseNotes>添加日志接口</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

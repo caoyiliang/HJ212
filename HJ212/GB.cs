@@ -93,6 +93,10 @@ namespace HJ212
         /// <inheritdoc/>
         public event ConnectEventHandler? OnConnect { add => _pigeonPort.OnConnect += value; remove => _pigeonPort.OnConnect -= value; }
         /// <inheritdoc/>
+        public event RequestedLogEventHandler? OnSentData { add => _pigeonPort.OnSentData += value; remove => _pigeonPort.OnSentData -= value; }
+        /// <inheritdoc/>
+        public event RespondedLogEventHandler? OnReceivedData { add => _pigeonPort.OnReceivedData += value; remove => _pigeonPort.OnReceivedData -= value; }
+        /// <inheritdoc/>
         public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017)
         {
             _name = name;

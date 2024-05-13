@@ -1,12 +1,19 @@
 ﻿using Communication;
 using HJ212.Model;
 using ProtocolInterface;
+using TopPortLib;
 
 namespace HJ212
 {
     /// <summary>国标接口</summary>
     public interface IGB : IProtocol
     {
+        /// <summary>请求数据</summary>
+        event RequestedLogEventHandler OnSentData;
+
+        /// <summary>接收数据</summary>
+        event RespondedLogEventHandler OnReceivedData;
+
         /// <summary>C1设置超时时间及重发次数</summary>
         event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)> OnSetOverTimeAndReCount;
 
