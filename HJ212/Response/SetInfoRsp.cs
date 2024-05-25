@@ -34,7 +34,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=3021")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.设置现场机参数}")).Any(), default);
         }
 
         public (string PolId, string InfoId, string Info, RspInfo RspInfo) GetResult()

@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class UploadStatisticsDataReq(CN cn, string mn, string pw, ST st, DateTime dataTime, List<StatisticsData> data, int pnum, int pno) : IAsyncRequest
+    internal class UploadStatisticsDataReq(CN_Client cn, string mn, string pw, ST st, DateTime dataTime, List<StatisticsData> data, int pnum, int pno) : IAsyncRequest
     {
         private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 

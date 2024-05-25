@@ -6,14 +6,14 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>CSoft.Protocol.HJ212</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>CSoft</Authors>
     <PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/caoyiliang/HJ212</RepositoryUrl>
     <Description>HJ212</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReleaseNotes>基础信息属性公开</PackageReleaseNotes>
+    <PackageReleaseNotes>统一管理CN</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

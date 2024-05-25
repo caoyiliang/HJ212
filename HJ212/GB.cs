@@ -202,7 +202,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new CN1011Req(rs.PolId, t.Result, rs.RspInfo));
+                        await _pigeonPort.SendAsync(new UploadSystemTimeReq(rs.PolId, t.Result, rs.RspInfo));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
@@ -296,7 +296,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new CN1063Req(t.Result, rs));
+                        await _pigeonPort.SendAsync(new UploadMinuteDataIntervalReq(t.Result, rs));
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs));
                     }
                 });
@@ -454,13 +454,13 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.分钟数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
         }
 
         /// <inheritdoc/>
         public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
         }
         #endregion
 
@@ -468,13 +468,13 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.小时数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
         }
 
         /// <inheritdoc/>
         public async Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
         }
         #endregion
 
@@ -482,13 +482,13 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN.日历史数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
+            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
         }
 
         /// <inheritdoc/>
         public async Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN.日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
         }
         #endregion
 

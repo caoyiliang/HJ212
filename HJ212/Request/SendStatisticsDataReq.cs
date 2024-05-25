@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class SendStatisticsDataReq(CN cn, string mn, string pw, bool qn, ST st, DateTime dataTime, List<StatisticsData> data, int pnum, int pno) : IByteStream
+    internal class SendStatisticsDataReq(CN_Client cn, string mn, string pw, bool qn, ST st, DateTime dataTime, List<StatisticsData> data, int pnum, int pno) : IByteStream
     {
         public byte[] ToBytes()
         {

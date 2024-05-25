@@ -28,7 +28,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=3015")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.超标留样}")).Any(), default);
         }
 
         public RspInfo GetResult()

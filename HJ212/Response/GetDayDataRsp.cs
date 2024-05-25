@@ -38,7 +38,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=2031")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.取污染物日历史数据}")).Any(), default);
         }
 
         public (DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) GetResult()

@@ -9,7 +9,7 @@ namespace HJ212.Response
     {
         private DateTime _beginTime;
         private DateTime _endTime;
-        private RspInfo _rspInfo = new();
+        private readonly RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
         {
             var str = Encoding.ASCII.GetString(bytes.Skip(6).ToArray());
@@ -38,7 +38,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=2061")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.取污染物小时数据}")).Any(), default);
         }
 
         public (DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) GetResult()

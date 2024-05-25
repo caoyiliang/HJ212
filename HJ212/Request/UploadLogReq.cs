@@ -15,7 +15,7 @@ namespace HJ212.Request
 
         public byte[] ToBytes()
         {
-            var rs = $"QN={_QN};ST={(int)st};CN=3020;PW={pw};MN={mn};Flag={(returnValue ? 1 : 0) | (int)GB._version};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{(polId == null ? "" : $"PolId ={polId};")}i11001-Info=//";
+            var rs = $"QN={_QN};ST={(int)st};CN={(int)CN_Client.上传现场机信息};PW={pw};MN={mn};Flag={(returnValue ? 1 : 0) | (int)GB._version};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{(polId == null ? "" : $"PolId ={polId};")}i11001-Info=//";
             var len = rs.Length + log.Length + 4;
             byte[] brs = [.. Encoding.ASCII.GetBytes(rs), .. Encoding.UTF8.GetBytes(log), .. Encoding.ASCII.GetBytes("//&&")];
             return [.. Encoding.ASCII.GetBytes($"##{len.ToString().PadLeft(4, '0')}"), .. brs, .. Encoding.ASCII.GetBytes($"{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}\r\n")];

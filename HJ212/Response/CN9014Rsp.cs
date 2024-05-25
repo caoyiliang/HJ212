@@ -29,7 +29,7 @@ namespace HJ212.Response
             }
             var rs = dstr.Split(';');
             var qn = rs.SingleOrDefault(item => item.Contains("QN"))?.Split('=')[1];
-            return (rs.Where(item => item.Contains("CN=9014")).Any(), qn == null ? default : Encoding.ASCII.GetBytes(qn));
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.数据应答}")).Any(), qn == null ? default : Encoding.ASCII.GetBytes(qn));
         }
 
         public RspInfo GetResult()

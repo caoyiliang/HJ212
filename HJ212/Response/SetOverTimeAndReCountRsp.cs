@@ -38,7 +38,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=1000")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.设置超时时间及重发次数}")).Any(), default);
         }
 
         public (int OverTime, int ReCount, RspInfo RspInfo) GetResult()

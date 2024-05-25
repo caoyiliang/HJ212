@@ -33,7 +33,7 @@ namespace HJ212.Response
                 throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
             }
             var rs = dstr.Split(';');
-            return (rs.Where(item => item.Contains("CN=1062")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.设置实时数据间隔}")).Any(), default);
         }
 
         public (int RtdInterval, RspInfo RspInfo) GetResult()
