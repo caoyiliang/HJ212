@@ -77,19 +77,19 @@ namespace HJ212
         Task UploadRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1);
 
         /// <summary>C16上传污染物分钟数据</summary>
-        Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1);
+        Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1, int pnum = 1, int pno = 1);
 
         /// <summary>C16上传污染物分钟数据(无返回变体)</summary>
         Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
 
         /// <summary>C17上传污染物小时数据</summary>
-        Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1);
+        Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1, int pnum = 1, int pno = 1);
 
         /// <summary>C17上传污染物小时数据(无返回变体)</summary>
         Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
 
         /// <summary>C18上传污染物日历史数据</summary>
-        Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1);
+        Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1, int pnum = 1, int pno = 1);
 
         /// <summary>C18上传污染物日历史数据(无返回变体)</summary>
         Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
@@ -183,5 +183,10 @@ namespace HJ212
 
         /// <summary>C46设置现场机参数</summary>
         event ActivelyPushDataEventHandler<(string PolId, string InfoId, string Info, RspInfo RspInfo)> OnSetInfo;
+
+        /// <summary>
+        /// 补发统计数据
+        /// </summary>
+        Task ReissueStatisticsData(string data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1);
     }
 }

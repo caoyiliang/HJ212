@@ -452,9 +452,20 @@ namespace HJ212
 
         #region c16
         /// <inheritdoc/>
-        public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
+        public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, ST, dataTime, data, pnum, pno);
+            var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
+
+            try
+            {
+                await func.ReTry(reTryCount, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                ex.Data.Add("SendCmd", uploadStatisticsDataReq.ToString());
+                throw;
+            }
         }
 
         /// <inheritdoc/>
@@ -466,9 +477,20 @@ namespace HJ212
 
         #region c17
         /// <inheritdoc/>
-        public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
+        public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, ST, dataTime, data, pnum, pno);
+            var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
+
+            try
+            {
+                await func.ReTry(reTryCount, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                ex.Data.Add("SendCmd", uploadStatisticsDataReq.ToString());
+                throw;
+            }
         }
 
         /// <inheritdoc/>
@@ -480,9 +502,20 @@ namespace HJ212
 
         #region c18
         /// <inheritdoc/>
-        public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int timeout = -1, int pnum = 1, int pno = 1)
+        public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(new UploadStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, ST, dataTime, data, pnum, pno), timeout);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, ST, dataTime, data, pnum, pno);
+            var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
+
+            try
+            {
+                await func.ReTry(reTryCount, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                ex.Data.Add("SendCmd", uploadStatisticsDataReq.ToString());
+                throw;
+            }
         }
 
         /// <inheritdoc/>
@@ -519,7 +552,7 @@ namespace HJ212
                         {
                             if (t.Result.ReturnValue)
                             {
-                                await UploadMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, t.Result.Timeout ?? -1, count, i + 1);
+                                await UploadMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, 0, default, t.Result.Timeout ?? -1, count, i + 1);
                             }
                             else
                             {
@@ -552,7 +585,7 @@ namespace HJ212
                         {
                             if (t.Result.ReturnValue)
                             {
-                                await UploadHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, t.Result.Timeout ?? -1, count, i + 1);
+                                await UploadHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, 0, default, t.Result.Timeout ?? -1, count, i + 1);
                             }
                             else
                             {
@@ -585,7 +618,7 @@ namespace HJ212
                         {
                             if (t.Result.ReturnValue)
                             {
-                                await UploadDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, t.Result.Timeout ?? -1, count, i + 1);
+                                await UploadDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, 0, default, t.Result.Timeout ?? -1, count, i + 1);
                             }
                             else
                             {
@@ -945,6 +978,22 @@ namespace HJ212
             }
         }
         #endregion
+
+        /// <inheritdoc/>
+        public async Task ReissueStatisticsData(string data, int reTryCount = 0, CancellationToken cancellationToken = default, int timeout = -1)
+        {
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(data);
+            var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
+
+            try
+            {
+                await func.ReTry(reTryCount, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                ex.Data.Add("SendCmd", uploadStatisticsDataReq.ToString());
+            }
+        }
 #pragma warning restore IDE0051 // 删除未使用的私有成员
     }
 }
