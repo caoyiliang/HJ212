@@ -992,6 +992,7 @@ namespace HJ212
             catch (Exception ex)
             {
                 ex.Data.Add("SendCmd", uploadStatisticsDataReq.ToString());
+                throw;
             }
         }
 #pragma warning restore IDE0051 // 删除未使用的私有成员
