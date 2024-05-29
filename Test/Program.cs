@@ -242,20 +242,20 @@ await gb.OpenAsync();
 //}
 //catch (TimeoutException) { }
 
-List<StatisticsData> statisticsDatas =
-[
-    new StatisticsData("a1001"){Min="30.7",Avg="50.4",Max="60.5",Flag="N"},
-    new StatisticsData("a1002"){Min="10.2",Avg="35.2",Max="50.1",Flag="D"}
-];
-try
-{
-    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
-    await gb.UploadMinuteData(DateTime.Now, statisticsDatas);
-}
-catch (Exception ex)
-{
-    await gb.ReissueStatisticsData(ex.Data["SendCmd"]?.ToString() ?? "");
-}
+//List<StatisticsData> statisticsDatas =
+//[
+//    new StatisticsData("a1001"){Min="30.7",Avg="50.4",Max="60.5",Flag="N"},
+//    new StatisticsData("a1002"){Min="10.2",Avg="35.2",Max="50.1",Flag="D"}
+//];
+//try
+//{
+//    //测试 QN=20240430102725064;ST=91;CN=9014;PW=123456;MN=010000A8900016F000169DC0;Flag=4;CP=&&&&
+//    await gb.UploadMinuteData(DateTime.Now, statisticsDatas);
+//}
+//catch (Exception ex)
+//{
+//    await gb.ReissueStatisticsData(ex.Data["SendCmd"]?.ToString() ?? "");
+//}
 //await gb.SendMinuteData(DateTime.Now, statisticsDatas);
 
 //try

@@ -1,7 +1,6 @@
 ﻿using HJ212.Model;
 using System.Text;
 using TopPortLib.Interfaces;
-using Utils;
 
 namespace HJ212.Response
 {
@@ -21,13 +20,7 @@ namespace HJ212.Response
 
         public (bool Type, byte[]? CheckBytes) Check(byte[] bytes)
         {
-            var data = bytes.Skip(6).ToArray();
-            var dstr = Encoding.ASCII.GetString(data);
-            if (StringByteUtils.BytesToString(CRC.GBcrc16(data, data.Length - 4)).Replace(" ", "") != dstr[^4..])
-            {
-                throw new ArgumentException($"{GB._name} HJ212 CRC Error: {dstr}", nameof(bytes));
-            }
-            var rs = dstr.Split(';');
+            var rs = Encoding.ASCII.GetString(bytes).Split(';');
             var qn = rs.SingleOrDefault(item => item.Contains("QN"))?.Split('=')[1];
             return (rs.Where(item => item.Contains($"CN={(int)CN_Server.数据应答}")).Any(), qn == null ? default : Encoding.ASCII.GetBytes(qn));
         }
