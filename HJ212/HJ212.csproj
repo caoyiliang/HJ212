@@ -6,14 +6,14 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>CSoft.Protocol.HJ212</PackageId>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
     <Authors>CSoft</Authors>
     <PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/caoyiliang/HJ212</RepositoryUrl>
     <Description>HJ212</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReleaseNotes>提升校验效率</PackageReleaseNotes>
+    <PackageReleaseNotes>修复异步口发送日志延迟问题</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="8.1.5" />
+    <PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="8.1.7" />
   </ItemGroup>
 
 </Project>

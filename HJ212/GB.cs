@@ -123,12 +123,14 @@ namespace HJ212
                 {
                     return Task.FromResult(new GetDataLengthRsp() { Length = 4, StateCode = Parser.StateCode.Success });
                 }
-            })));
-            _pigeonPort.CheckEvent = async (byte[] bytes) =>
+            })))
             {
-                var data = bytes.Skip(6).ToArray();
-                var dstr = Encoding.ASCII.GetString(data);
-                return await Task.FromResult(StringByteUtils.BytesToString(CRC.GBcrc16(data, data.Length - 4)).Replace(" ", "") == dstr[^4..]);
+                CheckEvent = async (byte[] bytes) =>
+                {
+                    var data = bytes.Skip(6).ToArray();
+                    var dstr = Encoding.ASCII.GetString(data);
+                    return await Task.FromResult(StringByteUtils.BytesToString(CRC.GBcrc16(data, data.Length - 4)).Replace(" ", "") == dstr[^4..]);
+                }
             };
             _pigeonPort.OnDisconnect += PigeonPort_OnDisconnect;
             _pigeonPort.OnConnect += PigeonPort_OnConnect;
