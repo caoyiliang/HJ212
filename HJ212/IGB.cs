@@ -115,8 +115,11 @@ namespace HJ212
         /// </summary>
         event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)> OnGetDayData;
 
-        /// <summary>C23取设备运行时间日历史数据</summary>
-        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<RunningTimeData> Data)> OnGetRunningTimeData;
+        /// <summary>
+        /// C23取设备运行时间日历史数据
+        /// 遵循C47-C50的规则
+        /// </summary>
+        event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<RunningTimeHistory>> OnGetRunningTimeData;
 
         /// <summary>C24上传数采仪开机时间</summary>
         Task UploadAcquisitionDeviceRestartTime(DateTime dataTime, DateTime restartTime, int timeout = -1);

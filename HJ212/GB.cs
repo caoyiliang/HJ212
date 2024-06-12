@@ -69,7 +69,7 @@ namespace HJ212
         /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetDayData;
         /// <inheritdoc/>
-        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (DateTime DataTime, List<RunningTimeData> Data)>? OnGetRunningTimeData;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<RunningTimeHistory>>? OnGetRunningTimeData;
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnCalibrate;
         /// <inheritdoc/>
@@ -654,7 +654,11 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(MN, PW, ST, t.Result.DataTime, t.Result.Data, false));
+                        var count = t.Result.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].Data, false));
+                        }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
                 });
