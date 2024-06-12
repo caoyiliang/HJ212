@@ -657,7 +657,7 @@ namespace HJ212
                         var count = t.Result.Count;
                         for (int i = 0; i < count; i++)
                         {
-                            await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].Data, false));
+                            await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].Data, false, count, i + 1));
                         }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }
