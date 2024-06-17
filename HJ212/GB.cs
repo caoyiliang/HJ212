@@ -929,9 +929,10 @@ namespace HJ212
                     }
                     else
                     {
-                        foreach (var item in t.Result)
+                        var count = t.Result.Count;
+                        for (int i = 0; i < count; i++)
                         {
-                            await _pigeonPort.SendAsync(new UploadLogReq(MN, PW, ST, item.DataTime, item.PolId, item.Info, false));
+                            await _pigeonPort.SendAsync(new UploadLogReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].PolId, t.Result[i].Info, count, i + 1, false));
                         }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
                     }

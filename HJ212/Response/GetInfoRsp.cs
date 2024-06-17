@@ -26,7 +26,7 @@ namespace HJ212.Response
         public (bool Type, byte[]? CheckBytes) Check(byte[] bytes)
         {
             var rs = Encoding.ASCII.GetString(bytes).Split(';');
-            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.提取现场机信息}")).Any() && rs.Where(item => !item.Contains("InfoId=i11001")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.提取现场机信息}")).Any() && rs.Where(item => item.Contains("InfoId=i12001")).Any(), default);
         }
 
         public (string PolId, string InfoId, RspInfo RspInfo) GetResult()

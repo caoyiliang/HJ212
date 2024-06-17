@@ -4,7 +4,7 @@ using HJ212;
 using HJ212.Model;
 
 Console.WriteLine("Hello, World!");
-IGB gb = new GB("通道一", new SerialPort(), "88888888", version: HJ212.Version.HJT212_2005);
+IGB gb = new GB("通道一", new TcpClient("127.0.0.1",2756), "88888888", version: HJ212.Version.HJT212_2005);
 
 gb.OnSetOverTimeAndReCount += Gb_OnSetOverTimeAndReCount;
 gb.OnGetSystemTime += Gb_OnGetSystemTime;
