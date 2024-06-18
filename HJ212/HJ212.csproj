@@ -6,14 +6,14 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>CSoft.Protocol.HJ212</PackageId>
-    <Version>1.0.10</Version>
+    <Version>1.0.11</Version>
     <Authors>CSoft</Authors>
     <PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
     <RepositoryUrl>https://github.com/caoyiliang/HJ212</RepositoryUrl>
     <Description>HJ212</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReleaseNotes>修复C41bug</PackageReleaseNotes>
+    <PackageReleaseNotes>修复C42bug</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
