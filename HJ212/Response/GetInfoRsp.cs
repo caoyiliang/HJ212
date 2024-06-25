@@ -9,7 +9,7 @@ namespace HJ212.Response
     {
         private string _polId = null!;
         private string _infoId = null!;
-        private RspInfo _rspInfo = new();
+        private readonly RspInfo _rspInfo = new();
         public async Task AnalyticalData(byte[] bytes)
         {
             var str = Encoding.ASCII.GetString(bytes.Skip(6).ToArray());
