@@ -110,7 +110,7 @@ namespace HJ212
         /// <inheritdoc/>
         public event RespondedLogEventHandler? OnReceivedData { add => _pigeonPort.OnReceivedData += value; remove => _pigeonPort.OnReceivedData -= value; }
         /// <inheritdoc/>
-        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool CR = true, bool LF = true, bool isDisconnectedWhenZero = true)
+        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool CR = true, bool LF = true)
         {
             _name = name;
             MN = mn;
@@ -131,7 +131,7 @@ namespace HJ212
                 {
                     return Task.FromResult(new GetDataLengthRsp() { Length = 4, StateCode = Parser.StateCode.Success });
                 }
-            }), isDisconnectedWhenZero))
+            })))
             {
                 CheckEvent = async (byte[] bytes) =>
                 {
