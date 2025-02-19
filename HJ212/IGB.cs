@@ -18,6 +18,10 @@ namespace HJ212
         ST ST { get; set; }
         /// <summary>国标版本</summary>
         Version Version { get; set; }
+        /// <summary>回车</summary>
+        public bool CR { get; set; }
+        /// <summary>换行</summary>
+        public bool LF { get; set; }
 
         /// <summary>请求数据</summary>
         event RequestedLogEventHandler OnSentData;

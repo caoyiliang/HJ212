@@ -35,9 +35,15 @@ namespace HJ212
         public ST ST { get; set; }
         /// <inheritdoc/>
         public Version Version { get => _version; set => _version = value; }
+        /// <inheritdoc/>
+        public bool CR { get => _cr; set => _cr = value; }
+        /// <inheritdoc/>
+        public bool LF { get => _lf; set => _lf = value; }
 
         internal static string _name = "HJ212";
         internal static Version _version;
+        internal static bool _cr;
+        internal static bool _lf;
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
         /// <inheritdoc/>
@@ -104,7 +110,7 @@ namespace HJ212
         /// <inheritdoc/>
         public event RespondedLogEventHandler? OnReceivedData { add => _pigeonPort.OnReceivedData += value; remove => _pigeonPort.OnReceivedData -= value; }
         /// <inheritdoc/>
-        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool isDisconnectedWhenZero = true)
+        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool CR = true, bool LF = true, bool isDisconnectedWhenZero = true)
         {
             _name = name;
             MN = mn;
@@ -112,6 +118,8 @@ namespace HJ212
             QN = qn;
             ST = st;
             Version = version;
+            this.CR = CR;
+            this.LF = LF;
             _pigeonPort = new PigeonPort(this, new TopPort(physicalPort, new HeadLengthParser([0x23, 0x23], d =>
             {
                 if (d.Length < 15) return Task.FromResult(new GetDataLengthRsp() { StateCode = Parser.StateCode.LengthNotEnough });
@@ -171,7 +179,7 @@ namespace HJ212
         internal static string GetGbCmd(string rs)
         {
             var brs = Encoding.ASCII.GetBytes(rs);
-            return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}\r\n";
+            return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}{(_cr ? "\r" : "")}{(_lf ? "\n" : "")}";
         }
 
 #pragma warning disable IDE0051 // 删除未使用的私有成员
