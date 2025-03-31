@@ -17,10 +17,7 @@ namespace HJ212
     public class GB : IGB
     {
         private static readonly ILogger _logger = Logs.LogFactory.GetLogger<GB>();
-#pragma warning disable CA1859 // 尽可能使用具体类型以提高性能
-        private readonly IPigeonPort _pigeonPort;
-#pragma warning restore CA1859 // 尽可能使用具体类型以提高性能
-
+        private readonly PigeonPort _pigeonPort;
         private bool _isConnect = false;
         /// <inheritdoc/>
         public bool IsConnect => _isConnect;
