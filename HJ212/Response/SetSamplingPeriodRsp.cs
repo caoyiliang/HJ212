@@ -19,14 +19,14 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Set SamplingPeriod Error");
+            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"HJ212 Set SamplingPeriod Error");
             if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("CTime"))?.Split('=')[1], out _Ctime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set SamplingPeriod CTime Error");
+                throw new ArgumentException($"HJ212 Set SamplingPeriod CTime Error");
             }
             if (!TimeOnly.TryParseExact(datalist.SingleOrDefault(item => item.Contains("CstartTime"))?.Split('=')[1], "HHmmss", null, System.Globalization.DateTimeStyles.None, out _CstartTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set SamplingPeriod CstartTime Error");
+                throw new ArgumentException($"HJ212 Set SamplingPeriod CstartTime Error");
             }
             await Task.CompletedTask;
         }

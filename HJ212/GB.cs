@@ -37,10 +37,10 @@ namespace HJ212
         /// <inheritdoc/>
         public bool LF { get => _lf; set => _lf = value; }
 
-        internal static string _name = "HJ212";
-        internal static Version _version;
-        internal static bool _cr;
-        internal static bool _lf;
+        internal string _name = "HJ212";
+        internal Version _version;
+        internal bool _cr;
+        internal bool _lf;
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
         /// <inheritdoc/>
@@ -173,7 +173,7 @@ namespace HJ212
         /// <inheritdoc/>
         public Task OpenAsync() => _pigeonPort.StartAsync();
 
-        internal static string GetGbCmd(string rs)
+        internal string GetGbCmd(string rs)
         {
             var brs = Encoding.ASCII.GetBytes(rs);
             return $"##{rs.Length.ToString().PadLeft(4, '0')}{rs}{StringByteUtils.BytesToString(CRC.GBcrc16(brs, brs.Length)).Replace(" ", "")}{(_cr ? "\r" : "")}{(_lf ? "\n" : "")}";
@@ -185,7 +185,7 @@ namespace HJ212
         {
             if (OnSetOverTimeAndReCount is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnSetOverTimeAndReCount(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -194,7 +194,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -206,7 +206,7 @@ namespace HJ212
         {
             if (OnGetSystemTime is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetSystemTime(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -215,8 +215,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new UploadSystemTimeReq(rs.PolId, t.Result, rs.RspInfo));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new UploadSystemTimeReq(rs.PolId, t.Result, rs.RspInfo, _version, GetGbCmd));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -228,7 +228,7 @@ namespace HJ212
         {
             if (OnSetSystemTime is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnSetSystemTime(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -237,7 +237,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -248,7 +248,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task AskSetSystemTime(string polId, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(MN, PW, ST, polId), timeout);
+            await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(MN, PW, ST, polId, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -257,7 +257,7 @@ namespace HJ212
         {
             if (OnGetRealTimeDataInterval is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await _pigeonPort.SendAsync(new ResponseReq(rs, _version, GetGbCmd));
                 await OnGetRealTimeDataInterval(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -266,8 +266,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new GetRealTimeDataIntervalReq(t.Result, rs));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                        await _pigeonPort.SendAsync(new GetRealTimeDataIntervalReq(t.Result, rs, _version, GetGbCmd));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs, _version, GetGbCmd));
                     }
                 });
             }
@@ -279,7 +279,7 @@ namespace HJ212
         {
             if (OnSetRealTimeDataInterval is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnSetRealTimeDataInterval(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -288,7 +288,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -300,7 +300,7 @@ namespace HJ212
         {
             if (OnGetMinuteDataInterval is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await _pigeonPort.SendAsync(new ResponseReq(rs, _version, GetGbCmd));
                 await OnGetMinuteDataInterval(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -309,8 +309,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new UploadMinuteDataIntervalReq(t.Result, rs));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                        await _pigeonPort.SendAsync(new UploadMinuteDataIntervalReq(t.Result, rs, _version, GetGbCmd));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs, _version, GetGbCmd));
                     }
                 });
             }
@@ -322,7 +322,7 @@ namespace HJ212
         {
             if (OnSetMinuteDataInterval is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnSetMinuteDataInterval(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -331,7 +331,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -343,7 +343,7 @@ namespace HJ212
         {
             if (OnSetNewPW is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnSetNewPW(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -352,7 +352,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -364,7 +364,7 @@ namespace HJ212
         {
             if (OnStartRealTimeData is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await _pigeonPort.SendAsync(new ResponseReq(rs, _version, GetGbCmd));
                 await OnStartRealTimeData(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -373,7 +373,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs, _version, GetGbCmd));
                     }
                 });
             }
@@ -393,7 +393,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new MessageResponseReq(rs));
+                        await _pigeonPort.SendAsync(new MessageResponseReq(rs, _version, GetGbCmd));
                     }
                 });
             }
@@ -405,7 +405,7 @@ namespace HJ212
         {
             if (OnStartRunningStateData is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await _pigeonPort.SendAsync(new ResponseReq(rs, _version, GetGbCmd));
                 await OnStartRunningStateData(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -414,7 +414,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs, _version, GetGbCmd));
                     }
                 });
             }
@@ -434,7 +434,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new MessageResponseReq(rs));
+                        await _pigeonPort.SendAsync(new MessageResponseReq(rs, _version, GetGbCmd));
                     }
                 });
             }
@@ -445,13 +445,13 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadRealTimeDataReq, CN9014Rsp>(new UploadRealTimeDataReq(MN, PW, ST, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadRealTimeDataReq, CN9014Rsp>(new UploadRealTimeDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
         }
 
         /// <inheritdoc/>
         public async Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data)
         {
-            await _pigeonPort.SendAsync(new SendRealTimeDataReq(MN, PW, QN, ST, dataTime, data));
+            await _pigeonPort.SendAsync(new SendRealTimeDataReq(MN, PW, QN, ST, dataTime, data, _version, GetGbCmd));
         }
         #endregion
 
@@ -459,7 +459,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadRunningStateDataReq, CN9014Rsp>(new UploadRunningStateDataReq(MN, PW, ST, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadRunningStateDataReq, CN9014Rsp>(new UploadRunningStateDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -467,7 +467,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
-            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, ST, dataTime, data, pnum, pno);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
             var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
 
             try
@@ -484,7 +484,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
         }
         #endregion
 
@@ -492,7 +492,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
-            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, ST, dataTime, data, pnum, pno);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
             var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
 
             try
@@ -509,7 +509,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
         }
         #endregion
 
@@ -517,7 +517,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
-            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, ST, dataTime, data, pnum, pno);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
             var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
 
             try
@@ -534,7 +534,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
         }
         #endregion
 
@@ -542,7 +542,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadRunningTimeDataReq, CN9014Rsp>(new UploadRunningTimeDataReq(MN, PW, ST, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadRunningTimeDataReq, CN9014Rsp>(new UploadRunningTimeDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -551,7 +551,7 @@ namespace HJ212
         {
             if (OnGetMinuteData is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetMinuteData(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -572,7 +572,7 @@ namespace HJ212
                                 await SendMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
                             }
                         }
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -584,7 +584,7 @@ namespace HJ212
         {
             if (OnGetHourData is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetHourData(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -605,7 +605,7 @@ namespace HJ212
                                 await SendHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
                             }
                         }
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -617,7 +617,7 @@ namespace HJ212
         {
             if (OnGetDayData is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetDayData(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -638,7 +638,7 @@ namespace HJ212
                                 await SendDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
                             }
                         }
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -650,7 +650,7 @@ namespace HJ212
         {
             if (OnGetRunningTimeData is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetRunningTimeData(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -662,9 +662,9 @@ namespace HJ212
                         var count = t.Result.Count;
                         for (int i = 0; i < count; i++)
                         {
-                            await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].Data, false, count, i + 1));
+                            await _pigeonPort.SendAsync(new UploadRunningTimeDataReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].Data, _version, GetGbCmd, false, count, i + 1));
                         }
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -675,7 +675,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadAcquisitionDeviceRestartTime(DateTime dataTime, DateTime restartTime, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadAcquisitionDeviceRestartTimeReq, CN9014Rsp>(new UploadAcquisitionDeviceRestartTimeReq(MN, PW, ST, dataTime, restartTime), timeout);
+            await _pigeonPort.RequestAsync<UploadAcquisitionDeviceRestartTimeReq, CN9014Rsp>(new UploadAcquisitionDeviceRestartTimeReq(MN, PW, ST, dataTime, restartTime, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -683,7 +683,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadRealTimeNoiseLevel(DateTime dataTime, float noiseLevel, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadRealTimeNoiseLevelReq, CN9014Rsp>(new UploadRealTimeNoiseLevelReq(MN, PW, ST, dataTime, noiseLevel), timeout);
+            await _pigeonPort.RequestAsync<UploadRealTimeNoiseLevelReq, CN9014Rsp>(new UploadRealTimeNoiseLevelReq(MN, PW, ST, dataTime, noiseLevel, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -691,7 +691,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadMinuteNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadMinuteNoiseLevelReq, CN9014Rsp>(new UploadMinuteNoiseLevelReq(MN, PW, ST, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadMinuteNoiseLevelReq, CN9014Rsp>(new UploadMinuteNoiseLevelReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -699,7 +699,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadHourNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadHourNoiseLevelReq, CN9014Rsp>(new UploadHourNoiseLevelReq(MN, PW, ST, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadHourNoiseLevelReq, CN9014Rsp>(new UploadHourNoiseLevelReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -707,7 +707,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadDayNoiseLevel(DateTime dataTime, List<NoiseLevelData_Day> data, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadDayNoiseLevelReq, CN9014Rsp>(new UploadDayNoiseLevelReq(MN, PW, ST, dataTime, data), timeout);
+            await _pigeonPort.RequestAsync<UploadDayNoiseLevelReq, CN9014Rsp>(new UploadDayNoiseLevelReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -716,7 +716,7 @@ namespace HJ212
         {
             if (OnCalibrate is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnCalibrate(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -725,7 +725,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -737,7 +737,7 @@ namespace HJ212
         {
             if (OnRealTimeSampling is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnRealTimeSampling(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -746,7 +746,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -758,7 +758,7 @@ namespace HJ212
         {
             if (OnStartCleaningOrBlowback is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnStartCleaningOrBlowback(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -767,7 +767,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -779,7 +779,7 @@ namespace HJ212
         {
             if (OnComparisonSampling is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnComparisonSampling(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -788,7 +788,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -800,7 +800,7 @@ namespace HJ212
         {
             if (OnOutOfStandardRetentionSample is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs));
+                await _pigeonPort.SendAsync(new ResponseReq(rs, _version, GetGbCmd));
                 await OnOutOfStandardRetentionSample(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -809,8 +809,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new OutOfStandardRetentionSampleReq(t.Result.DataTime, t.Result.VaseNo, rs));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs));
+                        await _pigeonPort.SendAsync(new OutOfStandardRetentionSampleReq(t.Result.DataTime, t.Result.VaseNo, rs, _version, GetGbCmd));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs, _version, GetGbCmd));
                     }
                 });
             }
@@ -822,7 +822,7 @@ namespace HJ212
         {
             if (OnSetSamplingPeriod is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnSetSamplingPeriod(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -831,7 +831,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -843,7 +843,7 @@ namespace HJ212
         {
             if (OnGetSamplingPeriod is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetSamplingPeriod(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -852,8 +852,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new GetSamplingPeriodReq(rs.PolId, t.Result.CstartTime, t.Result.Ctime, rs.RspInfo));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new GetSamplingPeriodReq(rs.PolId, t.Result.CstartTime, t.Result.Ctime, rs.RspInfo, _version, GetGbCmd));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -865,7 +865,7 @@ namespace HJ212
         {
             if (OnGetSampleExtractionTime is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetSampleExtractionTime(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -874,8 +874,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new GetSampleExtractionTimeReq(rs.PolId, t.Result, rs.RspInfo));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new GetSampleExtractionTimeReq(rs.PolId, t.Result, rs.RspInfo, _version, GetGbCmd));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -887,7 +887,7 @@ namespace HJ212
         {
             if (OnGetSN is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetSN(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -896,8 +896,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new GetSNReq(rs.PolId, t.Result, rs.RspInfo));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new GetSNReq(rs.PolId, t.Result, rs.RspInfo, _version, GetGbCmd));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -908,7 +908,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadSN(DateTime dataTime, string polId, string sn, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadSNReq, CN9014Rsp>(new UploadSNReq(MN, PW, ST, dataTime, polId, sn), timeout);
+            await _pigeonPort.RequestAsync<UploadSNReq, CN9014Rsp>(new UploadSNReq(MN, PW, ST, dataTime, polId, sn, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -916,7 +916,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadLog(DateTime dataTime, string? polId, string log, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(MN, PW, ST, dataTime, polId, log), timeout);
+            await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(MN, PW, ST, dataTime, polId, log, _version), timeout);
         }
         #endregion
 
@@ -925,7 +925,7 @@ namespace HJ212
         {
             if (OnGetLogInfos is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetLogInfos(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -937,9 +937,9 @@ namespace HJ212
                         var count = t.Result.Count;
                         for (int i = 0; i < count; i++)
                         {
-                            await _pigeonPort.SendAsync(new UploadLogReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].PolId, t.Result[i].Info, count, i + 1, false));
+                            await _pigeonPort.SendAsync(new UploadLogReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].PolId, t.Result[i].Info, _version, count, i + 1, false));
                         }
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -950,7 +950,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task UploadInfo(DateTime dataTime, string polId, List<DeviceInfo> deviceInfos, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadInfoReq, CN9014Rsp>(new UploadInfoReq(MN, PW, ST, dataTime, polId, deviceInfos), timeout);
+            await _pigeonPort.RequestAsync<UploadInfoReq, CN9014Rsp>(new UploadInfoReq(MN, PW, ST, dataTime, polId, deviceInfos, _version, GetGbCmd), timeout);
         }
         #endregion
 
@@ -959,7 +959,7 @@ namespace HJ212
         {
             if (OnGetInfo is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnGetInfo(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -968,8 +968,8 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new UploadInfoReq(MN, PW, ST, t.Result.DataTime, rs.PolId, t.Result.DeviceInfos, false));
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new UploadInfoReq(MN, PW, ST, t.Result.DataTime, rs.PolId, t.Result.DeviceInfos, _version, GetGbCmd, false));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -981,7 +981,7 @@ namespace HJ212
         {
             if (OnSetInfo is not null)
             {
-                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo));
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
                 await OnSetInfo(rs).ContinueWith(async t =>
                 {
                     if (t.Exception != null)
@@ -990,7 +990,7 @@ namespace HJ212
                     }
                     else
                     {
-                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo));
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
                     }
                 });
             }
@@ -1000,7 +1000,7 @@ namespace HJ212
         /// <inheritdoc/>
         public async Task ReissueStatisticsData(string data, int reTryCount = 0, int timeout = -1, CancellationToken cancellationToken = default)
         {
-            var uploadStatisticsDataReq = new UploadStatisticsDataReq(data);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(data, _name);
             var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
 
             try

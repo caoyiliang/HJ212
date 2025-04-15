@@ -17,7 +17,7 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            _newPW = datalist.SingleOrDefault(item => item.Contains("NewPW"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Set NewPW Error");
+            _newPW = datalist.SingleOrDefault(item => item.Contains("NewPW"))?.Split('=')[1] ?? throw new ArgumentException($"HJ212 Set NewPW Error");
             await Task.CompletedTask;
         }
 

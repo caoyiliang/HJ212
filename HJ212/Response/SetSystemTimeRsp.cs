@@ -21,7 +21,7 @@ namespace HJ212.Response
             _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1];
             if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("SystemTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _systemTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set SystemTime Error");
+                throw new ArgumentException($"HJ212 Set SystemTime Error");
             }
             await Task.CompletedTask;
         }

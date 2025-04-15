@@ -18,8 +18,8 @@ namespace HJ212.Response
             _rspInfo.ST = datalist.FirstOrDefault(item => item.Contains("ST"));
             _rspInfo.PW = datalist.FirstOrDefault(item => item.Contains("PW"));
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
-            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Get Info Error");
-            _infoId = datalist.SingleOrDefault(item => item.Contains("InfoId"))?.Split('=')[1] ?? throw new ArgumentException($"{GB._name} HJ212 Get Info Error");
+            _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1] ?? throw new ArgumentException($"HJ212 Get Info Error");
+            _infoId = datalist.SingleOrDefault(item => item.Contains("InfoId"))?.Split('=')[1] ?? throw new ArgumentException($"HJ212 Get Info Error");
             await Task.CompletedTask;
         }
 

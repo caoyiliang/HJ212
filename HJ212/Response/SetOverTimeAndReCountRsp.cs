@@ -20,11 +20,11 @@ namespace HJ212.Response
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
             if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("OverTime"))?.Split('=')[1], out _overTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set OverTime Error");
+                throw new ArgumentException($"HJ212 Set OverTime Error");
             }
             if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("ReCount"))?.Split('=')[1], out _reCount))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set ReCount Error");
+                throw new ArgumentException($"HJ212 Set ReCount Error");
             }
             await Task.CompletedTask;
         }

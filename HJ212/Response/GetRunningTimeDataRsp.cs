@@ -20,11 +20,11 @@ namespace HJ212.Response
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
             if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("BeginTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _beginTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Get RunningTimeData BeginTime Error");
+                throw new ArgumentException($"HJ212 Get RunningTimeData BeginTime Error");
             }
             if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("EndTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _endTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Get RunningTimeData EndTime Error");
+                throw new ArgumentException($"HJ212 Get RunningTimeData EndTime Error");
             }
             await Task.CompletedTask;
         }

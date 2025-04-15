@@ -19,7 +19,7 @@ namespace HJ212.Response
             _rspInfo.MN = datalist.FirstOrDefault(item => item.Contains("MN"));
             if (!int.TryParse(datalist.SingleOrDefault(item => item.Contains("MinInterval"))?.Split('=')[1], out _minInterval))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Set MinInterval Error");
+                throw new ArgumentException($"HJ212 Set MinInterval Error");
             }
             await Task.CompletedTask;
         }

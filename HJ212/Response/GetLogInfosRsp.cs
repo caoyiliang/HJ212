@@ -22,11 +22,11 @@ namespace HJ212.Response
             _polId = datalist.SingleOrDefault(item => item.Contains("PolId"))?.Split('=')[1];
             if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("BeginTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _beginTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Get LogInfos BeginTime Error");
+                throw new ArgumentException($"HJ212 Get LogInfos BeginTime Error");
             }
             if (!DateTime.TryParseExact(datalist.SingleOrDefault(item => item.Contains("EndTime"))?.Split('=')[1], "yyyyMMddHHmmss", null, System.Globalization.DateTimeStyles.None, out _endTime))
             {
-                throw new ArgumentException($"{GB._name} HJ212 Get LogInfos EndTime Error");
+                throw new ArgumentException($"HJ212 Get LogInfos EndTime Error");
             }
             await Task.CompletedTask;
         }
