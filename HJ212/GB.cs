@@ -488,6 +488,13 @@ namespace HJ212
         {
             await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
         }
+
+        /// <inheritdoc/>
+        public string GetSendMinuteDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        {
+            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            return Encoding.ASCII.GetString(sendStatisticsDataReq.ToBytes());
+        }
         #endregion
 
         #region c17
@@ -513,6 +520,13 @@ namespace HJ212
         {
             await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
         }
+
+        /// <inheritdoc/>
+        public string GetSendHourDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        {
+            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            return Encoding.ASCII.GetString(sendStatisticsDataReq.ToBytes());
+        }
         #endregion
 
         #region c18
@@ -537,6 +551,13 @@ namespace HJ212
         public async Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
         {
             await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
+        }
+
+        /// <inheritdoc/>
+        public string GetSendDayDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        {
+            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            return Encoding.ASCII.GetString(sendStatisticsDataReq.ToBytes());
         }
         #endregion
 
