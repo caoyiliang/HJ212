@@ -38,6 +38,7 @@ namespace HJ212
         public bool LF { get => _lf; set => _lf = value; }
 
         internal string _name = "HJ212";
+        private readonly bool _ascii;
         internal Version _version;
         internal bool _cr;
         internal bool _lf;
@@ -107,7 +108,7 @@ namespace HJ212
         /// <inheritdoc/>
         public event RespondedLogEventHandler? OnReceivedData { add => _pigeonPort.OnReceivedData += value; remove => _pigeonPort.OnReceivedData -= value; }
         /// <inheritdoc/>
-        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool CR = true, bool LF = true)
+        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool CR = true, bool LF = true, bool asciiLog = true)
         {
             _name = name;
             MN = mn;
@@ -117,6 +118,7 @@ namespace HJ212
             Version = version;
             this.CR = CR;
             this.LF = LF;
+            _ascii = asciiLog;
             _pigeonPort = new PigeonPort(this, new TopPort(physicalPort, new HeadLengthParser([0x23, 0x23], d =>
             {
                 if (d.Length < 15) return Task.FromResult(new GetDataLengthRsp() { StateCode = Parser.StateCode.LengthNotEnough });
@@ -145,13 +147,13 @@ namespace HJ212
 
         private async Task PigeonPort_OnReceivedData(byte[] data)
         {
-            _logger.Trace($"{_name} GB Rec:<-- {StringByteUtils.BytesToString(data)}");
+            _logger.Trace($"{_name} GB Rec:<-- {(_ascii ? Encoding.ASCII.GetString(data) : StringByteUtils.BytesToString(data))}");
             await Task.CompletedTask;
         }
 
         private async Task PigeonPort_OnSentData(byte[] data)
         {
-            _logger.Trace($"{_name} GB Sent:<-- {StringByteUtils.BytesToString(data)}");
+            _logger.Trace($"{_name} GB Sent:<-- {(_ascii ? Encoding.ASCII.GetString(data) : StringByteUtils.BytesToString(data))}");
             await Task.CompletedTask;
         }
 

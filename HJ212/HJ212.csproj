@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>CSoft.Protocol.HJ212</PackageId>
-    <Version>9.2.9</Version>
-    <Authors>CSoft</Authors>
-    <PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
-    <PackageIcon>logo.png</PackageIcon>
-    <RepositoryUrl>https://github.com/caoyiliang/HJ212</RepositoryUrl>
-    <Description>HJ212</Description>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReleaseNotes>更新依赖</PackageReleaseNotes>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageId>CSoft.Protocol.HJ212</PackageId>
+		<Version>9.3.1</Version>
+		<Authors>CSoft</Authors>
+		<PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
+		<PackageIcon>logo.png</PackageIcon>
+		<RepositoryUrl>https://github.com/caoyiliang/HJ212</RepositoryUrl>
+		<Description>HJ212</Description>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<PackageReleaseNotes>日志显示ascii</PackageReleaseNotes>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\logo.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\logo.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="9.5.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="9.5.2" />
+	</ItemGroup>
 
 </Project>
