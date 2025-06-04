@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageId>CSoft.Protocol.HJ212</PackageId>
-		<Version>9.3.3</Version>
+		<Version>9.4.0</Version>
 		<Authors>CSoft</Authors>
 		<PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
 		<PackageIcon>logo.png</PackageIcon>
@@ -24,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="9.6.2" />
+		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="9.7.0" />
 	</ItemGroup>
 
 </Project>
