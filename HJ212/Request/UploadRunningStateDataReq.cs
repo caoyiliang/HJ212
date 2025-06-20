@@ -15,7 +15,7 @@ namespace HJ212.Request
 
         public byte[] ToBytes()
         {
-            var rs = $"QN={_QN};ST={(int)st};CN={(int)CN_Client.上传设备运行状态数据};PW={pw};MN={mn};Flag={1 | (int)version};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{c.Name}-RS={c.RS}"))}&&";
+            var rs = $"QN={_QN};ST={(int)st};CN={(int)CN_Client.上传设备运行状态数据};PW={pw};MN={mn};Flag={1 | (int)version};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{c.Name}={c.RS}"))}&&";
             rs = func.Invoke(rs);
             return Encoding.ASCII.GetBytes(rs);
         }
