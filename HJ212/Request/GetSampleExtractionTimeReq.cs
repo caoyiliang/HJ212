@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class GetSampleExtractionTimeReq(string polId, int stime, RspInfo rspInfo, Version version, Func<string, string> func) : IByteStream
+    internal class GetSampleExtractionTimeReq(string polId, string stime, RspInfo rspInfo, Version version, Func<string, string> func) : IByteStream
     {
         public byte[] ToBytes()
         {

@@ -8,7 +8,6 @@ using Parser;
 using Parser.Parsers;
 using System.Text;
 using TopPortLib;
-using TopPortLib.Interfaces;
 using Utils;
 
 namespace HJ212
@@ -23,7 +22,7 @@ namespace HJ212
         public bool IsConnect => _isConnect;
 
         /// <inheritdoc/>
-        public string MN { get; set; }
+        public string? MN { get; set; }
         /// <inheritdoc/>
         public string PW { get; set; }
         /// <inheritdoc/>
@@ -45,9 +44,13 @@ namespace HJ212
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(int OverTime, int ReCount, RspInfo RspInfo)>? OnSetOverTimeAndReCount;
         /// <inheritdoc/>
+        public event ActivelyPushDataEventHandler<(string? DataLoggerId, RspInfo RspInfo)>? OnSetMN;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string? PolId, RspInfo RspInfo), DateTime?>? OnGetSystemTime;
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string? PolId, DateTime SystemTime, RspInfo RspInfo)>? OnSetSystemTime;
+        /// <inheritdoc/>
+        public event ActivelyPushDataEventHandler<(string SKCreateTime, string NewSK, RspInfo RspInfo)>? OnSetNewSK;
         /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<RspInfo, int>? OnGetRealTimeDataInterval;
         /// <inheritdoc/>
@@ -73,9 +76,13 @@ namespace HJ212
         /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), (List<HistoryData> HistoryDatas, bool ReturnValue, int? Timeout)>? OnGetDayData;
         /// <inheritdoc/>
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<HistoryRawData>>? OnGetRawData;
+        /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<RunningTimeHistory>>? OnGetRunningTimeData;
         /// <inheritdoc/>
-        public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnCalibrate;
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<ElectricityMonitoringHistory>>? OnGetElectricityMonitoringRealTimeData;
+        /// <inheritdoc/>
+        public event ActivelyPushDataEventHandler<(string PolId, CalibrationType? CalibrationType, RspInfo RspInfo)>? OnCalibrate;
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnRealTimeSampling;
         /// <inheritdoc/>
@@ -89,7 +96,7 @@ namespace HJ212
         /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), (TimeOnly CstartTime, int Ctime)>? OnGetSamplingPeriod;
         /// <inheritdoc/>
-        public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), int>? OnGetSampleExtractionTime;
+        public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string>? OnGetSampleExtractionTime;
         /// <inheritdoc/>
         public event ActivelyAskDataEventHandler<(string PolId, RspInfo RspInfo), string>? OnGetSN;
         /// <inheritdoc/>
@@ -98,6 +105,12 @@ namespace HJ212
         public event ActivelyAskDataEventHandler<(string PolId, string InfoId, RspInfo RspInfo), (DateTime DataTime, List<DeviceInfo> DeviceInfos)>? OnGetInfo;
         /// <inheritdoc/>
         public event ActivelyPushDataEventHandler<(string PolId, string InfoId, string Info, RspInfo RspInfo)>? OnSetInfo;
+        /// <inheritdoc/>
+        public event ActivelyAskDataEventHandler<(DateTime BeginTime, DateTime EndTime, RspInfo RspInfo), List<AutoStandardCheckData>>? OnGetAutoStandardCheckData;
+        /// <inheritdoc/>
+        public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnStartAutoStandardCheck;
+        /// <inheritdoc/>
+        public event ActivelyPushDataEventHandler<(string PolId, RspInfo RspInfo)>? OnStartRealTimeSampleTask;
 
         /// <inheritdoc/>
         public event DisconnectEventHandler? OnDisconnect { add => _pigeonPort.OnDisconnect += value; remove => _pigeonPort.OnDisconnect -= value; }
@@ -108,7 +121,7 @@ namespace HJ212
         /// <inheritdoc/>
         public event RespondedLogEventHandler? OnReceivedData { add => _pigeonPort.OnReceivedData += value; remove => _pigeonPort.OnReceivedData -= value; }
         /// <inheritdoc/>
-        public GB(string name, IPhysicalPort physicalPort, string mn, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool CR = true, bool LF = true, bool asciiLog = true)
+        public GB(string name, IPhysicalPort physicalPort, string? mn = null, string pw = "123456", bool qn = true, ST st = ST.大气环境污染源, Version version = Version.HJT212_2017, bool CR = true, bool LF = true, bool asciiLog = true)
         {
             _name = name;
             MN = mn;
@@ -132,7 +145,7 @@ namespace HJ212
                 }
             })))
             {
-                CheckEvent = async (byte[] bytes) =>
+                CheckEvent = async bytes =>
                 {
                     var data = bytes.Skip(6).ToArray();
                     var dstr = Encoding.ASCII.GetString(data);
@@ -204,6 +217,36 @@ namespace HJ212
         #endregion
 
         #region c2
+        /// <inheritdoc/>
+        public async Task UploadHardwareSN(string dataLoggerId, string cpuId, string mac1, string mac2, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadHardwareSNReq, CN9013Rsp>(new UploadHardwareSNReq(MN, PW, ST, dataLoggerId, cpuId, mac1, mac2, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c3
+        private async Task SetMNRspEvent((string? DataLoggerId, RspInfo RspInfo) rs)
+        {
+            if (OnSetMN is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
+                await OnSetMN(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB SetMN Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        MN = rs.RspInfo.MN;
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c4
         private async Task GetSystemTimeRspEvent((string? PolId, RspInfo RspInfo) rs)
         {
             if (OnGetSystemTime is not null)
@@ -225,7 +268,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c3
+        #region c5
         private async Task SetSystemTimeRspEvent((string? PolId, DateTime SystemTime, RspInfo RspInfo) rs)
         {
             if (OnSetSystemTime is not null)
@@ -246,15 +289,48 @@ namespace HJ212
         }
         #endregion
 
-        #region c4
+        #region c6
         /// <inheritdoc/>
         public async Task AskSetSystemTime(string polId, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<AskSetSystemTimeReq, AskSetSystemTimeRsp>(new AskSetSystemTimeReq(MN, PW, ST, polId, _version, GetGbCmd), timeout);
+            await _pigeonPort.RequestAsync<AskSetSystemTimeReq, CN9013Rsp>(new AskSetSystemTimeReq(MN, PW, ST, polId, _version, GetGbCmd), timeout);
         }
         #endregion
 
-        #region c5
+        #region c7
+        /// <inheritdoc/>
+        public async Task AskNewSK(string? mSKCreateTime = null, int timeout = -1)
+        {
+            if (string.IsNullOrEmpty(MN))
+            {
+                throw new ArgumentException("MN cannot be null or empty when requesting a new password.");
+            }
+            await _pigeonPort.RequestAsync<AskNewSKReq, CN9013Rsp>(new AskNewSKReq(MN, PW, ST, mSKCreateTime ?? DateTime.Now.ToString("yyyyMMddHHmmssfff"), _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c8
+        private async Task SetNewSKRspEvent((string SKCreateTime, string NewSK, RspInfo RspInfo) rs)
+        {
+            if (OnSetNewSK is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
+                await OnSetNewSK(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB SetNewSK Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c9
         private async Task GetRealTimeDataIntervalRspEvent(RspInfo rs)
         {
             if (OnGetRealTimeDataInterval is not null)
@@ -276,7 +352,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c6
+        #region c10
         private async Task SetRealTimeDataIntervalRspEvent((int RtdInterval, RspInfo RspInfo) rs)
         {
             if (OnSetRealTimeDataInterval is not null)
@@ -297,7 +373,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c7
+        #region c11
         private async Task GetMinuteDataIntervalRspEvent(RspInfo rs)
         {
             if (OnGetMinuteDataInterval is not null)
@@ -319,7 +395,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c8
+        #region c12
         private async Task SetMinuteDataIntervalRspEvent((int RtdInterval, RspInfo RspInfo) rs)
         {
             if (OnSetMinuteDataInterval is not null)
@@ -340,7 +416,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c9
+        #region c13
         private async Task SetNewPWRspEvent((string NewPW, RspInfo RspInfo) rs)
         {
             if (OnSetNewPW is not null)
@@ -361,7 +437,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c10
+        #region c14
         private async Task StartRealTimeDataRspEvent(RspInfo rs)
         {
             if (OnStartRealTimeData is not null)
@@ -382,7 +458,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c11
+        #region c15
         private async Task StopRealTimeDataRspEvent(RspInfo rs)
         {
             if (OnStopRealTimeData is not null)
@@ -402,7 +478,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c12
+        #region c16
         private async Task StartRunningStateDataRspEvent(RspInfo rs)
         {
             if (OnStartRunningStateData is not null)
@@ -423,7 +499,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c13
+        #region c17
         private async Task StopRunningStateDataRspEvent(RspInfo rs)
         {
             if (OnStopRunningStateData is not null)
@@ -443,7 +519,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c14、29
+        #region c18、29
         /// <inheritdoc/>
         public async Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
         {
@@ -457,7 +533,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c15
+        #region c19
         /// <inheritdoc/>
         public async Task UploadRunningStateData(DateTime dataTime, List<RunningStateData> data, int timeout = -1)
         {
@@ -465,7 +541,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c16
+        #region c20
         /// <inheritdoc/>
         public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
@@ -497,7 +573,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c17
+        #region c21
         /// <inheritdoc/>
         public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
@@ -529,7 +605,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c18
+        #region c22
         /// <inheritdoc/>
         public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
@@ -561,7 +637,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c19
+        #region c23
         /// <inheritdoc/>
         public async Task UploadRunningTimeData(DateTime dataTime, List<RunningTimeData> data, int timeout = -1)
         {
@@ -569,7 +645,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c20、47、48、49、50
+        #region c24、55、56、57、58
         private async Task GetMinuteDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetMinuteData is not null)
@@ -602,7 +678,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c21、47、48、49、50
+        #region c25、55、56、57、58
         private async Task GetHourDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetHourData is not null)
@@ -635,7 +711,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c22、47、48、49、50
+        #region c26、55、56、57、58
         private async Task GetDayDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetDayData is not null)
@@ -668,7 +744,41 @@ namespace HJ212
         }
         #endregion
 
-        #region c23
+        #region c27
+        private async Task GetRawDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
+        {
+            if (OnGetRawData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
+                await OnGetRawData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetRawData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        var count = t.Result.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            await _pigeonPort.SendAsync(new UploadRawDataReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].Data, _version, GetGbCmd, false, count, i + 1));
+                        }
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c28
+        /// <inheritdoc/>
+        public async Task UploadRawData(DateTime dataTime, List<RawData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadRawDataReq, CN9014Rsp>(new UploadRawDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c29
         private async Task GetRunningTimeDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetRunningTimeData is not null)
@@ -694,7 +804,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c24
+        #region c30
         /// <inheritdoc/>
         public async Task UploadAcquisitionDeviceRestartTime(DateTime dataTime, DateTime restartTime, int timeout = -1)
         {
@@ -702,7 +812,15 @@ namespace HJ212
         }
         #endregion
 
-        #region c25
+        #region c31
+        /// <inheritdoc/>
+        public Task UploadFurnaceTemperature(DateTime dataTime, string avgData, int timeout = -1)
+        {
+            return _pigeonPort.RequestAsync<UploadFurnaceTemperatureReq, CN9014Rsp>(new UploadFurnaceTemperatureReq(MN, PW, ST, dataTime, avgData, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c32
         /// <inheritdoc/>
         public async Task UploadRealTimeNoiseLevel(DateTime dataTime, float noiseLevel, int timeout = -1)
         {
@@ -710,7 +828,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c26
+        #region c33
         /// <inheritdoc/>
         public async Task UploadMinuteNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1)
         {
@@ -718,7 +836,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c27
+        #region (2025中已经删除，2017-C27)
         /// <inheritdoc/>
         public async Task UploadHourNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1)
         {
@@ -726,7 +844,15 @@ namespace HJ212
         }
         #endregion
 
-        #region c28
+        #region c34
+        /// <inheritdoc/>
+        public Task UploadSingleNoiseLevel(DateTime dataTime, List<NoiseLevelData> data, int timeout = -1)
+        {
+            return _pigeonPort.RequestAsync<UploadSingleNoiseLevelReq, CN9014Rsp>(new UploadSingleNoiseLevelReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c35
         /// <inheritdoc/>
         public async Task UploadDayNoiseLevel(DateTime dataTime, List<NoiseLevelData_Day> data, int timeout = -1)
         {
@@ -734,8 +860,58 @@ namespace HJ212
         }
         #endregion
 
-        #region c30
-        private async Task CalibrateRspEvent((string PolId, RspInfo RspInfo) rs)
+        #region c36
+        /// <inheritdoc/>
+        public Task UploadKeyProductionConditionRealTimeData(DateTime dataTime, List<KeyProductionConditionData> data, int timeout = -1)
+        {
+            return _pigeonPort.RequestAsync<UploadKeyProductionConditionRealTimeDataReq, CN9014Rsp>(new UploadKeyProductionConditionRealTimeDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c37
+        /// <inheritdoc/>
+        public async Task UploadElectricityMonitoringRealTimeDataForProduction(DateTime dataTime, List<ElectricityMonitoringData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadElectricityMonitoringRealTimeDataReq, CN9014Rsp>(new UploadElectricityMonitoringRealTimeDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c38
+        /// <inheritdoc/>
+        public async Task UploadElectricityMonitoringRealTimeDataForTreatment(DateTime dataTime, List<ElectricityMonitoringData> data, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadElectricityMonitoringRealTimeDataReq, CN9014Rsp>(new UploadElectricityMonitoringRealTimeDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c39、c40
+        private async Task GetElectricityMonitoringRealTimeDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
+        {
+            if (OnGetElectricityMonitoringRealTimeData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
+                await OnGetElectricityMonitoringRealTimeData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetElectricityMonitoringRealTimeData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        var count = t.Result.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            await _pigeonPort.SendAsync(new UploadElectricityMonitoringRealTimeDataReq(MN, PW, ST, t.Result[i].DataTime, t.Result[i].Data, _version, GetGbCmd, false, count, i + 1));
+                        }
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c41
+        private async Task CalibrateRspEvent((string PolId, CalibrationType? CalibrationType, RspInfo RspInfo) rs)
         {
             if (OnCalibrate is not null)
             {
@@ -755,7 +931,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c31
+        #region c42
         private async Task RealTimeSamplingRspEvent((string PolId, RspInfo RspInfo) rs)
         {
             if (OnRealTimeSampling is not null)
@@ -776,7 +952,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c32
+        #region c43
         private async Task StartCleaningOrBlowbackRspEvent((string PolId, RspInfo RspInfo) rs)
         {
             if (OnStartCleaningOrBlowback is not null)
@@ -797,7 +973,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c33
+        #region (2025中已经删除，2017-c33)
         private async Task ComparisonSamplingRspEvent((string PolId, RspInfo RspInfo) rs)
         {
             if (OnComparisonSampling is not null)
@@ -818,7 +994,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c34
+        #region (2025中已经删除，2017-c34)
         private async Task OutOfStandardRetentionSampleRspEvent(RspInfo rs)
         {
             if (OnOutOfStandardRetentionSample is not null)
@@ -840,7 +1016,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c35
+        #region (2025中已经删除，2017-c35)
         private async Task SetSamplingPeriodRspEvent((string PolId, TimeOnly CstartTime, int Ctime, RspInfo RspInfo) rs)
         {
             if (OnSetSamplingPeriod is not null)
@@ -861,7 +1037,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c36
+        #region (2025中已经删除，2017-c36)
         private async Task GetSamplingPeriodRspEvent((string PolId, RspInfo RspInfo) rs)
         {
             if (OnGetSamplingPeriod is not null)
@@ -883,7 +1059,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c37
+        #region c44
         private async Task GetSampleExtractionTimeRspEvent((string PolId, RspInfo RspInfo) rs)
         {
             if (OnGetSampleExtractionTime is not null)
@@ -905,7 +1081,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c38
+        #region c45
         private async Task GetSNRspEvent((string PolId, RspInfo RspInfo) rs)
         {
             if (OnGetSN is not null)
@@ -927,7 +1103,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c39
+        #region c46
         /// <inheritdoc/>
         public async Task UploadSN(DateTime dataTime, string polId, string sn, int timeout = -1)
         {
@@ -935,15 +1111,20 @@ namespace HJ212
         }
         #endregion
 
-        #region c40
+        #region c47
         /// <inheritdoc/>
         public async Task UploadLog(DateTime dataTime, string? polId, string log, int timeout = -1)
         {
+            var logBytes = Encoding.UTF8.GetBytes(log);
+            if (logBytes.Length > 890)
+            {
+                throw new ArgumentException("Log data exceeds 890 bytes limit.");
+            }
             await _pigeonPort.RequestAsync<UploadLogReq, CN9014Rsp>(new UploadLogReq(MN, PW, ST, dataTime, polId, log, _version), timeout);
         }
         #endregion
 
-        #region c41
+        #region c48
         private async Task GetLogInfosRspEvent((string? PolId, DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
         {
             if (OnGetLogInfos is not null)
@@ -969,7 +1150,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c42、44
+        #region c49、51
         /// <inheritdoc/>
         public async Task UploadInfo(DateTime dataTime, string polId, List<DeviceInfo> deviceInfos, int timeout = -1)
         {
@@ -977,7 +1158,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c43、45
+        #region c50、52
         private async Task GetInfoRspEvent((string PolId, string InfoId, RspInfo RspInfo) rs)
         {
             if (OnGetInfo is not null)
@@ -999,7 +1180,7 @@ namespace HJ212
         }
         #endregion
 
-        #region c46
+        #region c53
         private async Task SetInfoRspEvent((string PolId, string InfoId, string Info, RspInfo RspInfo) rs)
         {
             if (OnSetInfo is not null)
@@ -1017,6 +1198,105 @@ namespace HJ212
                     }
                 });
             }
+        }
+        #endregion
+
+        #region c54
+        /// <inheritdoc/>
+        public async Task SendHeartbeat(bool returnValue = true, int timeout = -1)
+        {
+            if (returnValue)
+            {
+                await _pigeonPort.RequestAsync<HeartbeatReq, CN9013Rsp>(new HeartbeatReq(MN, PW, ST, _version, GetGbCmd), timeout);
+            }
+            else
+            {
+                await _pigeonPort.SendAsync(new HeartbeatReq(MN, PW, ST, _version, GetGbCmd, false));
+            }
+        }
+        #endregion
+
+        #region c59
+        /// <inheritdoc/>
+        public async Task UploadAutoStandardCheckData(DateTime dataTime, string polId, string sampleRd, string resultType, string standardValue, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadAutoStandardCheckDataReq, CN9014Rsp>(new UploadAutoStandardCheckDataReq(MN, PW, ST, dataTime, polId, sampleRd, resultType, standardValue, _version, GetGbCmd), timeout);
+        }
+        #endregion
+
+        #region c60
+        private async Task GetAutoStandardCheckDataRspEvent((DateTime BeginTime, DateTime EndTime, RspInfo RspInfo) rs)
+        {
+            if (OnGetAutoStandardCheckData is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
+                await OnGetAutoStandardCheckData(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB GetAutoStandardCheckData Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        var count = t.Result.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            await _pigeonPort.RequestAsync<UploadAutoStandardCheckDataReq, CN9014Rsp>(new UploadAutoStandardCheckDataReq(MN, PW, ST, t.Result[0].DataTime, t.Result[0].PolId, t.Result[0].SampleRd, t.Result[0].ResultType, t.Result[0].StandardValue, _version, GetGbCmd, count, i + 1));
+                        }
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c61
+        private async Task StartAutoStandardCheckRspEvent((string PolId, RspInfo RspInfo) rs)
+        {
+            if (OnStartAutoStandardCheck is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
+                await OnStartAutoStandardCheck(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB StartAutoStandardCheck Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c62
+        private async Task StartRealTimeSampleTaskRspEvent((string PolId, RspInfo RspInfo) rs)
+        {
+            if (OnStartRealTimeSampleTask is not null)
+            {
+                await _pigeonPort.SendAsync(new ResponseReq(rs.RspInfo, _version, GetGbCmd));
+                await OnStartRealTimeSampleTask(rs).ContinueWith(async t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        _logger.Error($"{_name} GB StartRealTimeSampleTask Error\n{t.Exception}");
+                    }
+                    else
+                    {
+                        await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
+                    }
+                });
+            }
+        }
+        #endregion
+
+        #region c63
+        /// <inheritdoc/>
+        public async Task UploadSampleInfo(DateTime dataTime, string vaseNo, List<SampleInfo> sampleInfos, int timeout = -1)
+        {
+            await _pigeonPort.RequestAsync<UploadSampleInfoReq, CN9014Rsp>(new UploadSampleInfoReq(MN, PW, ST, dataTime, vaseNo, sampleInfos, _version, GetGbCmd), timeout);
         }
         #endregion
 

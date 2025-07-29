@@ -3,7 +3,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class AskSetSystemTimeReq(string mn, string pw, ST st, string polId, Version version, Func<string, string> func) : IAsyncRequest
+    internal class AskSetSystemTimeReq(string? mn, string pw, ST st, string polId, Version version, Func<string, string> func) : IAsyncRequest
     {
         public byte[]? Check()
         {

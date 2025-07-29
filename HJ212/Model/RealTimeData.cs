@@ -16,5 +16,7 @@
         public string? SampleTime { get; set; }
         /// <summary>污染物对应在线监控（监测）仪器仪表的设备标志</summary>
         public string? EFlag { get; set; }
+        /// <summary>污染物标记拓展</summary>
+        public Dictionary<string, string> Other { get; set; } = [];
     }
 }

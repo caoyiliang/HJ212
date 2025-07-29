@@ -4,11 +4,11 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class SendRealTimeDataReq(string mn, string pw, bool qn, ST st, DateTime dataTime, List<RealTimeData> data, Version version, Func<string, string> func) : IByteStream
+    internal class SendRealTimeDataReq(string? mn, string pw, bool qn, ST st, DateTime dataTime, List<RealTimeData> data, Version version, Func<string, string> func) : IByteStream
     {
         public byte[] ToBytes()
         {
-            var rs = $"{(qn ? $"QN={DateTime.Now:yyyyMMddHHmmssfff};" : "")}ST={(int)st};CN={(int)CN_Client.上传污染物实时数据};PW={pw};MN={mn};Flag={0 | (int)version};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{(c.SampleTime != null ? $"{c.Name}-SampleTime={c.SampleTime}," : "")}{c.Name}-Rtd={c.Rtd}{(c.Flag != null ? $",{c.Name}-Flag={c.Flag}" : "")}{(c.EFlag != null ? $",{c.Name}-EFlag={c.EFlag}" : "")}"))}&&";
+            var rs = $"{(qn ? $"QN={DateTime.Now:yyyyMMddHHmmssfff};" : "")}ST={(int)st};CN={(int)CN_Client.上传污染物实时数据};PW={pw};MN={mn};Flag={0 | (int)version};CP=&&DataTime={dataTime:yyyyMMddHHmmss};{string.Join(";", data.Select(c => $"{(c.SampleTime != null ? $"{c.Name}-SampleTime={c.SampleTime}," : "")}{c.Name}-Rtd={c.Rtd}{(c.Flag != null ? $",{c.Name}-Flag={c.Flag}" : "")}{(c.EFlag != null ? $",{c.Name}-EFlag={c.EFlag}" : "")}{(c.Other.Count > 0 ? $",{string.Join(",", c.Other.Select(i => $"{c.Name}-{i.Key}={i.Value}"))}" : "")}"))}&&";
             rs = func.Invoke(rs);
             return Encoding.ASCII.GetBytes(rs);
         }

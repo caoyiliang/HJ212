@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class UploadInfoReq(string mn, string pw, ST st, DateTime dataTime, string polId, List<DeviceInfo> deviceInfos, Version version, Func<string, string> func, bool returnValue = true) : IAsyncRequest
+    internal class UploadInfoReq(string? mn, string pw, ST st, DateTime dataTime, string polId, List<DeviceInfo> deviceInfos, Version version, Func<string, string> func, bool returnValue = true) : IAsyncRequest
     {
         private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 

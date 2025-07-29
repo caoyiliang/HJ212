@@ -1,7 +1,6 @@
 ﻿using HJ212.Model;
 using System.Text;
 using TopPortLib.Interfaces;
-using Utils;
 
 namespace HJ212.Response
 {
@@ -22,7 +21,7 @@ namespace HJ212.Response
         public (bool Type, byte[]? CheckBytes) Check(byte[] bytes)
         {
             var rs = Encoding.ASCII.GetString(bytes).Split(';');
-            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.取污染物实时数据}")).Any(), default);
+            return (rs.Where(item => item.Contains($"CN={(int)CN_Server.取污染物实时数据}")).Any() && (!rs.Where(item => item.Contains("BeginTime")).Any()), default);
         }
 
         public RspInfo GetResult()

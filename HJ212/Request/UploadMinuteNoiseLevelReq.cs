@@ -4,7 +4,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class UploadMinuteNoiseLevelReq(string mn, string pw, ST st, DateTime dataTime, List<NoiseLevelData> data, Version version, Func<string, string> func) : IAsyncRequest
+    internal class UploadMinuteNoiseLevelReq(string? mn, string pw, ST st, DateTime dataTime, List<NoiseLevelData> data, Version version, Func<string, string> func) : IAsyncRequest
     {
         private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 

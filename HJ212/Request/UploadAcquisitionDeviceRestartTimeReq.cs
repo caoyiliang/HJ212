@@ -3,7 +3,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class UploadAcquisitionDeviceRestartTimeReq(string mn, string pw, ST st, DateTime dataTime, DateTime restartTime, Version version, Func<string, string> func) : IAsyncRequest
+    internal class UploadAcquisitionDeviceRestartTimeReq(string? mn, string pw, ST st, DateTime dataTime, DateTime restartTime, Version version, Func<string, string> func) : IAsyncRequest
     {
         private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 

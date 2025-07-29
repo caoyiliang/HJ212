@@ -4,7 +4,7 @@ using Utils;
 
 namespace HJ212.Request
 {
-    internal class UploadLogReq(string mn, string pw, ST st, DateTime dataTime, string? polId, string log, Version version, int pnum = 1, int pno = 1, bool returnValue = true) : IAsyncRequest
+    internal class UploadLogReq(string? mn, string pw, ST st, DateTime dataTime, string? polId, string log, Version version, int pnum = 1, int pno = 1, bool returnValue = true) : IAsyncRequest
     {
         private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 

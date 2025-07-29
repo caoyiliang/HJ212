@@ -18,5 +18,7 @@
         public string? Max { get; set; }
         /// <summary>监测仪器数据标记</summary>
         public string? Flag { get; set; }
+        /// <summary>污染物标记拓展</summary>
+        public Dictionary<string, string> Other { get; set; } = [];
     }
 }

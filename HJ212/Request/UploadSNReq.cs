@@ -3,7 +3,7 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class UploadSNReq(string mn, string pw, ST st, DateTime dataTime, string polId, string sn, Version version, Func<string, string> func) : IAsyncRequest
+    internal class UploadSNReq(string? mn, string pw, ST st, DateTime dataTime, string polId, string sn, Version version, Func<string, string> func) : IAsyncRequest
     {
         private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
