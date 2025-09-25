@@ -4,9 +4,9 @@ using TopPortLib.Interfaces;
 
 namespace HJ212.Request
 {
-    internal class UploadRealTimeDataReq(string? mn, string pw, ST st, DateTime dataTime, List<RealTimeData> data, Version version, Func<string, string> func) : IAsyncRequest
+    internal class UploadRealTimeDataReq(string? mn, string pw, ST st, DateTime dataTime, List<RealTimeData> data, Version version, Func<string, string> func, DateTime? sendTime = null) : IAsyncRequest
     {
-        private readonly string _QN = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        private readonly string _QN = sendTime == null ? DateTime.Now.ToString("yyyyMMddHHmmssfff") : sendTime.Value.ToString("yyyyMMddHHmmssfff");
 
         public byte[]? Check()
         {

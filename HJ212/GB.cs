@@ -521,15 +521,15 @@ namespace HJ212
 
         #region c18、29
         /// <inheritdoc/>
-        public async Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1)
+        public async Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, DateTime? sendTime = null, int timeout = -1)
         {
-            await _pigeonPort.RequestAsync<UploadRealTimeDataReq, CN9014Rsp>(new UploadRealTimeDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd), timeout);
+            await _pigeonPort.RequestAsync<UploadRealTimeDataReq, CN9014Rsp>(new UploadRealTimeDataReq(MN, PW, ST, dataTime, data, _version, GetGbCmd, sendTime), timeout);
         }
 
         /// <inheritdoc/>
-        public async Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data)
+        public async Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data, DateTime? sendTime = null)
         {
-            await _pigeonPort.SendAsync(new SendRealTimeDataReq(MN, PW, QN, ST, dataTime, data, _version, GetGbCmd));
+            await _pigeonPort.SendAsync(new SendRealTimeDataReq(MN, PW, QN, ST, dataTime, data, _version, GetGbCmd, sendTime));
         }
         #endregion
 
@@ -543,9 +543,9 @@ namespace HJ212
 
         #region c20
         /// <inheritdoc/>
-        public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
+        public async Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
-            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime);
             var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
 
             try
@@ -560,24 +560,24 @@ namespace HJ212
         }
 
         /// <inheritdoc/>
-        public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        public async Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime));
         }
 
         /// <inheritdoc/>
-        public string GetSendMinuteDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        public string GetSendMinuteDataCmd(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1)
         {
-            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物分钟数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime);
             return Encoding.ASCII.GetString(sendStatisticsDataReq.ToBytes());
         }
         #endregion
 
         #region c21
         /// <inheritdoc/>
-        public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
+        public async Task UploadHourData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
-            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime);
             var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
 
             try
@@ -592,24 +592,24 @@ namespace HJ212
         }
 
         /// <inheritdoc/>
-        public async Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        public async Task SendHourData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime));
         }
 
         /// <inheritdoc/>
-        public string GetSendHourDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        public string GetSendHourDataCmd(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1)
         {
-            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物小时数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime);
             return Encoding.ASCII.GetString(sendStatisticsDataReq.ToBytes());
         }
         #endregion
 
         #region c22
         /// <inheritdoc/>
-        public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
+        public async Task UploadDayData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default)
         {
-            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            var uploadStatisticsDataReq = new UploadStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime);
             var func = async () => await _pigeonPort.RequestAsync<UploadStatisticsDataReq, CN9014Rsp>(uploadStatisticsDataReq, timeout);
 
             try
@@ -624,15 +624,15 @@ namespace HJ212
         }
 
         /// <inheritdoc/>
-        public async Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        public async Task SendDayData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1)
         {
-            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd));
+            await _pigeonPort.SendAsync(new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime));
         }
 
         /// <inheritdoc/>
-        public string GetSendDayDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1)
+        public string GetSendDayDataCmd(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1)
         {
-            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd);
+            var sendStatisticsDataReq = new SendStatisticsDataReq(CN_Client.上传污染物日历史数据, MN, PW, QN, ST, dataTime, data, pnum, pno, _version, GetGbCmd, sendTime);
             return Encoding.ASCII.GetString(sendStatisticsDataReq.ToBytes());
         }
         #endregion
@@ -664,11 +664,11 @@ namespace HJ212
                         {
                             if (t.Result.ReturnValue)
                             {
-                                await UploadMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, 0, t.Result.Timeout ?? -1, count, i + 1);
+                                await UploadMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, null, 0, t.Result.Timeout ?? -1, count, i + 1);
                             }
                             else
                             {
-                                await SendMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
+                                await SendMinuteData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, null, count, i + 1);
                             }
                         }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
@@ -697,11 +697,11 @@ namespace HJ212
                         {
                             if (t.Result.ReturnValue)
                             {
-                                await UploadHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, 0, t.Result.Timeout ?? -1, count, i + 1);
+                                await UploadHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, null, 0, t.Result.Timeout ?? -1, count, i + 1);
                             }
                             else
                             {
-                                await SendHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
+                                await SendHourData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, null, count, i + 1);
                             }
                         }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));
@@ -730,11 +730,11 @@ namespace HJ212
                         {
                             if (t.Result.ReturnValue)
                             {
-                                await UploadDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, 0, t.Result.Timeout ?? -1, count, i + 1);
+                                await UploadDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, null, 0, t.Result.Timeout ?? -1, count, i + 1);
                             }
                             else
                             {
-                                await SendDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, count, i + 1);
+                                await SendDayData(t.Result.HistoryDatas[i].DataTime, t.Result.HistoryDatas[i].Data, null, count, i + 1);
                             }
                         }
                         await _pigeonPort.SendAsync(new SuccessfulReq(rs.RspInfo, _version, GetGbCmd));

@@ -151,8 +151,9 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间点，时间精确到秒；20240601085857表示上传数据为2024年6月1日8时58分57秒的监测参数实时数据</param>
         /// <param name="data">实时数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="timeout">超时时间，单位毫秒，默认-1表示使用构造中的超时时间</param>
-        Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, int timeout = -1);
+        Task UploadRealTimeData(DateTime dataTime, List<RealTimeData> data, DateTime? sendTime = null, int timeout = -1);
 
         /// <summary>
         /// 2025:C18
@@ -161,7 +162,8 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间点，时间精确到秒；20240601085857表示上传数据为2024年6月1日8时58分57秒的监测参数实时数据</param>
         /// <param name="data">实时数据包集</param>
-        Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data);
+        /// <param name="sendTime">发送时间</param>
+        Task SendRealTimeData(DateTime dataTime, List<RealTimeData> data, DateTime? sendTime = null);
 
         /// <summary>
         /// 2025:C19
@@ -180,12 +182,13 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到分钟；若分钟数据上传时间间隔取值为1 min，则20240601080100表示上传数据为时间段2024年6月1日8时01分0秒到2024年6月1日8时02分0秒之间的监测参数分钟数据</param>
         /// <param name="data">分钟数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="reTryCount">重发次数</param>
         /// <param name="timeout">超时时间，单位毫秒，默认-1表示使用构造中的超时时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
         /// <param name="cancellationToken">取消令牌</param>
-        Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default);
+        Task UploadMinuteData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 2025:C20
@@ -194,9 +197,10 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到分钟；若分钟数据上传时间间隔取值为1 min，则20240601080100表示上传数据为时间段2024年6月1日8时01分0秒到2024年6月1日8时02分0秒之间的监测参数分钟数据</param>
         /// <param name="data">分钟数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
-        Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
+        Task SendMinuteData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1);
 
         /// <summary>
         /// 2025:C20
@@ -205,9 +209,10 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到分钟；若分钟数据上传时间间隔取值为1 min，则20240601080100表示上传数据为时间段2024年6月1日8时01分0秒到2024年6月1日8时02分0秒之间的监测参数分钟数据</param>
         /// <param name="data">分钟数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
-        string GetSendMinuteDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
+        string GetSendMinuteDataCmd(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1);
 
         /// <summary>
         /// 2025:C21
@@ -216,12 +221,13 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到小时； 20240601080000表示上传数据为时间段2024年6月1日8时0分0秒到2024年6月1日9时0分0秒之间的监测参数小时数据</param>
         /// <param name="data">小时数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="reTryCount">重发次数</param>
         /// <param name="timeout">超时时间，单位毫秒，默认-1表示使用构造中的超时时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
         /// <param name="cancellationToken">取消令牌</param>
-        Task UploadHourData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default);
+        Task UploadHourData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 2025:C21
@@ -230,9 +236,10 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到小时； 20240601080000表示上传数据为时间段2024年6月1日8时0分0秒到2024年6月1日9时0分0秒之间的监测参数小时数据</param>
         /// <param name="data">小时数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
-        Task SendHourData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
+        Task SendHourData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1);
 
         /// <summary>
         /// 2025:C21
@@ -241,9 +248,10 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到小时； 20240601080000表示上传数据为时间段2024年6月1日8时0分0秒到2024年6月1日9时0分0秒之间的监测参数小时数据</param>
         /// <param name="data">小时数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
-        string GetSendHourDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
+        string GetSendHourDataCmd(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1);
 
         /// <summary>
         /// 2025:C22
@@ -252,12 +260,13 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到日；“ 20240601000000”表示上传数据为时间段2024年6月1日0时0分0秒到2024年6月2日0时0分0秒之间的日数据</param>
         /// <param name="data">日数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="reTryCount">重发次数</param>
         /// <param name="timeout">超时时间，单位毫秒，默认-1表示使用构造中的超时时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
         /// <param name="cancellationToken">取消令牌</param>
-        Task UploadDayData(DateTime dataTime, List<StatisticsData> data, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default);
+        Task UploadDayData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int reTryCount = 0, int timeout = -1, int pnum = 1, int pno = 1, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 2025:C22
@@ -266,9 +275,10 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到日；“ 20240601000000”表示上传数据为时间段2024年6月1日0时0分0秒到2024年6月2日0时0分0秒之间的日数据</param>
         /// <param name="data">日数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
-        Task SendDayData(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
+        Task SendDayData(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1);
 
         /// <summary>
         /// 2025:C22
@@ -277,9 +287,10 @@ namespace HJ212
         /// </summary>
         /// <param name="dataTime">数据时间，表示一个时间段的开始时间点，时间精确到日；“ 20240601000000”表示上传数据为时间段2024年6月1日0时0分0秒到2024年6月2日0时0分0秒之间的日数据</param>
         /// <param name="data">日数据包集</param>
+        /// <param name="sendTime">发送时间</param>
         /// <param name="pnum">总包数</param>
         /// <param name="pno">当前包号</param>
-        string GetSendDayDataCmd(DateTime dataTime, List<StatisticsData> data, int pnum = 1, int pno = 1);
+        string GetSendDayDataCmd(DateTime dataTime, List<StatisticsData> data, DateTime? sendTime = null, int pnum = 1, int pno = 1);
 
         /// <summary>
         /// 2025:C23
