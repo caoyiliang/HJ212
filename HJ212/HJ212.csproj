@@ -6,14 +6,14 @@
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageId>CSoft.Protocol.HJ212</PackageId>
-		<Version>10.0.0</Version>
+		<Version>10.0.1</Version>
 		<Authors>CSoft</Authors>
 		<PackageProjectUrl>https://github.com/caoyiliang/HJ212</PackageProjectUrl>
 		<PackageIcon>logo.png</PackageIcon>
 		<RepositoryUrl>https://github.com/caoyiliang/HJ212</RepositoryUrl>
 		<Description>HJ212</Description>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<PackageReleaseNotes>升级.net10</PackageReleaseNotes>
+		<PackageReleaseNotes>依赖更新</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="10.0.0" />
+		<PackageReference Include="CSoft.Protocol.ProtocolInterface" Version="10.0.11" />
 	</ItemGroup>
 
 </Project>

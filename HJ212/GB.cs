@@ -183,7 +183,10 @@ namespace HJ212
         }
 
         /// <inheritdoc/>
-        public Task CloseAsync() => _pigeonPort.StopAsync();
+        public Task CloseAsync(bool closePhysicalPort)
+        {
+            return _pigeonPort.StopAsync();
+        }
 
         /// <inheritdoc/>
         public Task OpenAsync() => _pigeonPort.StartAsync();
